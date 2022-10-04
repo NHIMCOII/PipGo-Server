@@ -1,0 +1,15 @@
+{
+    "role": {
+        "admin": "admin",
+        "editor": "editor",
+        "sale": "sale",
+        "host": "host",
+        "customer": "customer"
+    },
+    "default_password": "12345678",
+    "regex_phone": "/^(\\+?84|0)((3([2-9]))|(5([689]))|(7([0|6-9]))|(8([1-5]))|(9([0-9])))([0-9]{7})$/",
+    "account_status": {
+        "active": 1,
+        "inactive": 0
+    }
+}
