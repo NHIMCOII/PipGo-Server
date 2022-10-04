@@ -28,7 +28,7 @@ app.use(bodyParser.json());
 app.use(cors(corsOptions))
 app.use(helmet());
 app.use(compression());
-app.use(morgan("combined", { stream: accessLogStream }));
+// app.use(morgan("combined", { stream: accessLogStream }));
 
 // ======================= Routes =========================
 
