@@ -8,65 +8,6 @@ const sgMail = require("@sendgrid/mail");
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const User = require("../models/user");
-// const ClientA = require("../models/client_a");
-// const ClientB = require("../models/client_b");
-
-exports.register = async (req, res, next) => {
-  try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      const error = new Error("Validation failed.");
-      error.statusCode = 422;
-      error.data = errors.array();
-      throw error;
-    }
-    
-    const { role, email, phone, avatar, firstName, lastName, gender, dob } =
-    req.body;
-    
-    const check_user = await User.findOne({
-      email: email,
-      role: role,
-    });
-    if (check_user) {
-      throw new Error("Email already exists, please pick a different one.");
-    }
-
-    const salt = await bcrypt.genSalt();
-    const hash_password = await bcrypt.hash(
-      config.get("default_password"),
-      salt
-    );
-
-    const user = new User({
-      role: role,
-      email: email,
-      phone: phone,
-      password: hash_password,
-      avatar: avatar,
-      name: {
-        first: firstName,
-        last: lastName,
-      },
-      gender: gender,
-      dob: dob,
-    });
-
-    await user.save();
-    res.status(201).json({ message: "New User Created", user: user });
-    sgMail.send({
-      to: email,
-      from: process.env.SENDGRID_EMAIL,
-      subject: "Registered",
-      html: "<h1>Login with your email and default password (12345678)</h1>",
-    });
-  } catch (err) {
-    if (!err.statusCode) {
-      err.statusCode = 500;
-    }
-    next(err);
-  }
-};
 
 exports.login = async (req, res, next) => {
   try {
@@ -83,7 +24,9 @@ exports.login = async (req, res, next) => {
     const check_user = await User.findOne({ email: email, role: role });
 
     if (!check_user) {
-      const error = new Error("An user with this email could not be found");
+      const error = new Error(
+        "Your email or role is incorrect, please try again"
+      );
       error.statusCode = 404;
       throw error;
     }
@@ -97,20 +40,18 @@ exports.login = async (req, res, next) => {
 
     let user = {
       _id: check_user._id,
-      name: check_user.name,
-      role: check_user.role,
     };
     const access_token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
-      expiresIn: 60 * 5,
+      expiresIn: config.get('default.access_token_exp'),
     });
     const refresh_token = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, {
-      expiresIn: 60 * 60 * 24 * 30,
+      expiresIn: 60 * 60 * 24 * 90,
     });
 
     check_user.refresh_token = refresh_token;
     await check_user.save();
     res.status(200).json({
-      userId: check_user._id,
+      user: check_user,
       access_token: access_token,
       refresh_token: refresh_token,
     });
@@ -147,12 +88,10 @@ exports.generateToken = async (req, res, next) => {
 
         let user = {
           _id: check_user._id,
-          name: check_user.name,
-          role: check_user.role,
         };
 
         const access_token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
-          expiresIn: 60 * 5,
+          expiresIn: config.get('default.access_token_exp'),
         });
 
         return res.status(200).json({
@@ -187,7 +126,9 @@ exports.reset = async (req, res, next) => {
       const token = buffer.toString("hex");
       const user = await User.findOne({ email: email, role: role });
       if (!user) {
-        const error = new Error("An user with this email could not be found.");
+        const error = new Error(
+          "Your email or role is incorrect, please try again"
+        );
         error.statusCode = 401;
         throw error;
       }
@@ -213,7 +154,7 @@ exports.reset = async (req, res, next) => {
   });
 };
 
-exports.newPassword = async (req, res, next) => {
+exports.resetPassword = async (req, res, next) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -258,9 +199,9 @@ exports.newPassword = async (req, res, next) => {
 
 exports.logout = async (req, res, next) => {
   try {
-    const check_user = await User.findById(req.userId)
-    check_user.refresh_token = undefined
-    check_user.save()
+    const check_user = await User.findById(req.user._id);
+    check_user.refresh_token = undefined;
+    check_user.save();
 
     res.status(200).json({ message: "Logout successfully" });
   } catch (err) {

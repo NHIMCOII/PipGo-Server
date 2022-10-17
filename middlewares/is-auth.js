@@ -13,14 +13,12 @@ exports.authToken = (req, res, next) => {
         error.statusCode = 403;
         throw error;
       }
-      User.findOne({
-        _id: user._id,
-      }).then((check_user) => {
-        req.userId = check_user._id;
-        next();
-      });
+      User.findById(user._id).then(check_user => {
+        req.user = check_user
+        next()
+      })
     });
-  } else {
+  } else { 
     const error = new Error("Not Authenticated");
     error.statusCode = 401;
     throw error;
@@ -29,16 +27,14 @@ exports.authToken = (req, res, next) => {
 
 exports.authRole = (roles) => {
   return async (req, res, next) => {
-    const check_user = await User.findById(req.userId)
     if (
-      !roles.includes(check_user.role) ||
-      check_user.status != config.get("account_status.active")
+      !roles.includes(req.user.role) ||
+      req.user.status != config.get("account_status.active")
     ) {
       return res.status(401).json({
         message: "Access Denied - Unauthorized",
       });
     }
-
     next();
   };
 };

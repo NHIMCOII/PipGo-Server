@@ -2,14 +2,29 @@
     "role": {
         "admin": "admin",
         "editor": "editor",
-        "sale": "sale",
+        "sale": {
+            "user": "sale_user",
+            "agent": "sale_agent"
+        },
         "host": "host",
-        "customer": "customer"
+        "customer": "customer",
+        "guest": "guest"
     },
-    "default_password": "12345678",
+    "default": {
+        "password": "12345678",
+        "avatar": "someURLpath",
+        "access_token_exp": 3600
+    },
     "regex_phone": "/^(\\+?84|0)((3([2-9]))|(5([689]))|(7([0|6-9]))|(8([1-5]))|(9([0-9])))([0-9]{7})$/",
     "account_status": {
         "active": 1,
         "inactive": 0
-    }
+    },
+    "booking_status": {
+        "available": "available",
+        "maintaining": "maintaining",
+        "fully booked": "fully booked"
+    },
+    "desc_length": 60,
+    "name_length": 100
 }
