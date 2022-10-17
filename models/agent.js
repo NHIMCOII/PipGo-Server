@@ -1,19 +1,27 @@
 const mongoose = require("mongoose");
-const config = require("config");
+// const config = require("config");
 
 const Schema = mongoose.Schema;
 
-const userSchema = new Schema(
+const agentSchema = new Schema(
   {
+    ref_id: {
+      type: mongoose.Types.ObjectId,
+      ref: "Agent",
+    },
     contracts: [{ type: mongoose.Types.ObjectId, ref: "Contract" }],
     address: {
       province_id: { type: mongoose.Types.ObjectId, ref: "Province" },
       details: String,
     },
+    area_id: {
+      type: mongoose.Types.ObjectId,
+      ref: "Area",
+    },
     role: {
       type: String,
       required: true,
-      enum: ["admin", "editor", "sale_user"],
+      enum: ["host", "sale_client"],
     },
     status: {
       type: Boolean,
@@ -64,4 +72,4 @@ const userSchema = new Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("User", userSchema);
+module.exports = mongoose.model("Agent", agentSchema);

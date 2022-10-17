@@ -1,31 +1,34 @@
 const path = require("path");
-const fs = require("fs");
+// const fs = require("fs");
 const express = require("express");
 const bodyParser = require("body-parser");
-const cors = require('cors');
+const cors = require("cors");
 const helmet = require("helmet");
 const compression = require("compression");
-const morgan = require("morgan");
+// const morgan = require("morgan");
 
 const authRoutes = require("./routes/auth");
 const userRoutes = require("./routes/user");
+const areaRoutes = require("./routes/area");
+const houseRoutes = require("./routes/house");
+const searchRoutes = require("./routes/search");
 
 const app = express();
 
-const accessLogStream = fs.createWriteStream(
-  path.join(__dirname, "access.log"),
-  { flags: "a" }
-);
+// const accessLogStream = fs.createWriteStream(
+//   path.join(__dirname, "access.log"),
+//   { flags: "a" }
+// );
 
 const corsOptions = {
-  origin: '*',
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'] ,
-  allowedHeaders: ['Content-Type', 'Authorization']
+  origin: "*",
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
 };
 
-app.use(express.static(path.join(__dirname, "public")));
+// app.use(express.static(path.join(__dirname, "public")));
 app.use(bodyParser.json());
-app.use(cors(corsOptions))
+app.use(cors(corsOptions));
 app.use(helmet());
 app.use(compression());
 // app.use(morgan("combined", { stream: accessLogStream }));
@@ -34,7 +37,9 @@ app.use(compression());
 
 app.use("/auth", authRoutes);
 app.use("/user", userRoutes);
-
+app.use("/area", areaRoutes);
+app.use("/house", houseRoutes);
+app.use("/search", searchRoutes);
 
 // ==================== Errors Handler =====================
 app.use((error, req, res, next) => {
