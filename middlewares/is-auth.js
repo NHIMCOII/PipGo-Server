@@ -3,6 +3,9 @@ const jwt = require("jsonwebtoken");
 
 const User = require("../models/user");
 
+/**
+ * JWT 
+ */
 exports.authToken = (req, res, next) => {
   const auth_header = req.headers["authorization"];
   const access_token = auth_header && auth_header.split(" ")[1];
@@ -24,7 +27,10 @@ exports.authToken = (req, res, next) => {
     throw error;
   }
 };
-
+/**
+ * Auth Role 
+ * @param {[String]} roles 
+ */
 exports.authRole = (roles) => {
   return async (req, res, next) => {
     if (

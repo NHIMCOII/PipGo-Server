@@ -9,6 +9,7 @@ const compression = require("compression");
 
 const authRoutes = require("./routes/auth");
 const userRoutes = require("./routes/user");
+const categoryRoutes = require("./routes/category");
 const areaRoutes = require("./routes/area");
 const houseRoutes = require("./routes/house");
 const searchRoutes = require("./routes/search");
@@ -37,6 +38,7 @@ app.use(compression());
 
 app.use("/auth", authRoutes);
 app.use("/user", userRoutes);
+app.use("/category", categoryRoutes);
 app.use("/area", areaRoutes);
 app.use("/house", houseRoutes);
 app.use("/search", searchRoutes);

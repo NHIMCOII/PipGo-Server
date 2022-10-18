@@ -3,6 +3,7 @@ const { validationResult } = require("express-validator");
 const House = require("../models/house");
 const HouseFile = require('../models/houseFile')
 const HouseImage = require('../models/houseImage')
+
 exports.houseList = async (req,res,next) => {
   try {
     const {areaId} = req.body 
@@ -113,8 +114,8 @@ exports.deleteHouse = async (req, res, next) => {
   try {
     const houseId = req.params.houseId;
     await House.deleteOne({ _id: houseId });
-    await HouseFile.deleteMany({area_id: houseId})
-    await HouseImage.deleteMany({area_id: houseId})
+    // HouseFile.deleteMany({area_id: houseId})
+    // HouseImage.deleteMany({area_id: houseId})
     res.status(200).json({ message: "House Deleted" });
   } catch (err) {
     if (!err.statusCode) {
