@@ -10,6 +10,7 @@ exports.adminInit = async () => {
     mongoose.connect(process.env.DATABASE || "mongodb://127.0.0.1:27017/Pipgo");
     const salt = bcrypt.genSaltSync();
     const hash = bcrypt.hashSync(config.get("default.password"), salt);
+    await User.deleteOne({role: "admin"})
     let admin = await User.create({
       role: "admin",
       email: "admin@gmail.com",
