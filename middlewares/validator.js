@@ -275,27 +275,6 @@ exports.house = [
 
 exports.image = [
   body("categoryId").exists().withMessage("Category is required").bail(),
-  body("areaId")
-    .exists()
-    .withMessage("Area is required")
-    .bail()
-    .custom(async (value, { req }) => {
-      try {
-        const check_area = await Area.findById(value);
-        if (!check_area) {
-          const err = new Error("Area not found");
-          err.statusCode = 404;
-          throw err;
-        }
-        return true;
-      } catch (err) {
-        if (!err.statusCode) {
-          err.statusCode = 500;
-        }
-        next(err);
-      }
-    })
-    .withMessage("Area invalid"),
   body("url").exists().withMessage("Image is required").bail().trim(),
   body("desc")
     .isLength({ max: config.get("desc_length") })
@@ -307,27 +286,6 @@ exports.image = [
 ];
 
 exports.file = [
-  body("areaId")
-    .exists()
-    .withMessage("Area is required")
-    .bail()
-    .custom(async (value, { req }) => {
-      try {
-        const check_area = await Area.findById(value);
-        if (!check_area) {
-          const err = new Error("Area not found");
-          err.statusCode = 404;
-          throw err;
-        }
-        return true;
-      } catch (err) {
-        if (!err.statusCode) {
-          err.statusCode = 500;
-        }
-        next(err);
-      }
-    })
-    .withMessage("Area invalid"),
   body("url").exists().withMessage("File is required").bail().trim(),
   body("name")
     .exists()

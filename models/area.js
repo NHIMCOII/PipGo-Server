@@ -36,7 +36,7 @@ const areaSchema = new Schema(
     },
     avatar: {
       type: String,
-      required: false,
+      required: true,
       default: config.get("default.avatar"),
     },
     video: String,
