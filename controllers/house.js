@@ -6,7 +6,7 @@ const HouseImage = require('../models/houseImage')
 
 exports.houseList = async (req,res,next) => {
   try {
-    const {areaId} = req.body 
+    const {areaId} = req.query
     const list = await House.find({area_id: areaId})
     res.status(200).json({message: 'Fetched all houses', list: list})
   }catch (err) {

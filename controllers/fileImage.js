@@ -8,12 +8,12 @@ const HouseFile = require("../models/houseFile");
 exports.viewAllImage = (type) => {
     return async (req, res, next) => {
       try {
-        const { areaId, houseId } = req.body;
+        const { areaId, houseId } = req.query;
         let list = [];
         if (type == "area") {
-          list = await AreaImage.find({ area_id: areaId });
+          list = await AreaImage.find({ area_id: areaId }).populate("category_id");
         } else if (type == "house") {
-          list = await HouseImage.find({ house_id: houseId });
+          list = await HouseImage.find({ house_id: houseId }).populate("category_id");
         } else {
           res.status(404).json({ error: "Type must be area or house" });
         }
@@ -143,7 +143,7 @@ exports.viewAllImage = (type) => {
   exports.viewAllFile = (type) => {
     return async (req, res, next) => {
       try {
-        const { areaId, houseId } = req.body;
+        const { areaId, houseId } = req.query;
         let list = [];
         if (type == "area") {
           list = await AreaFile.find({ area_id: areaId });
