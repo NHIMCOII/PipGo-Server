@@ -8,13 +8,11 @@ const router = express.Router();
 
 router.get(
     "/areaCategory",
-    authToken,
     categoryController.viewCategory("area")
   );
   
   router.get(
     "/houseCategory",
-    authToken,
     categoryController.viewCategory("house")
   );
   
