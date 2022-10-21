@@ -23,7 +23,7 @@ PipGo/
  - **[Auth]**: Các thao tác login, logout, quên mật khẩu
 
  - **[User]**: Các thao tác liên quan đến quản lý tài khoản bao gồm: 
-    -Tạo tk mới, xóa tk, xem thông tin tất cả tk (chỉ dành cho Admin) 
+    - Tạo tk mới, xóa tk, xem thông tin tất cả tk (chỉ dành cho Admin) 
     - Xem thông tin tk, cập nhật thông tin tk, đổi mật khẩu 
 
  - **[Category]**: Các thao tác liên quan đến danh mục ảnh:
