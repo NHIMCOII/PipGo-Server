@@ -31,7 +31,7 @@ exports.addArea = async (req, res, next) => {
       throw error;
     }
 
-    const { provinceId, name, capacity, minPrice, maxPrice } = req.body;
+    const { provinceId, name, capacity, minPrice, maxPrice, avatar,desc } = req.body;
 
     const check_area = await Area.findOne({
       name: name,
@@ -54,6 +54,8 @@ exports.addArea = async (req, res, next) => {
         min: minPrice,
         max: maxPrice,
       },
+      avatar: avatar,
+      desc:desc
     });
 
     provinceHelper.add(provinceId);
