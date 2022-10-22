@@ -9,6 +9,8 @@ const router = express.Router();
 
 router.get('/filter',validator.filter,searchController.filter)
 
+router.get('/houseList',searchController.houseList)
+
 router.get('/area/:areaId',searchController.area)
 
 router.get('/house/:houseId',searchController.house)

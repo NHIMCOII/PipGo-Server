@@ -61,17 +61,39 @@ exports.filter = async (req, res, next) => {
   }
 };
 
-exports.area = async (req, res, next) => {
-  try{
-    const areaId = req.params.areaId
-    const check_area = await Area.findById(areaId)
-    if(!check_area){
-     const err = new Error('Area not found')
-     err.statusCode = 404
-     throw(err)
+exports.houseList = async (req, res, next) => {
+  try {
+    const { areaId } = req.query;
+    const check_area = await Area.findById(areaId);
+    if (!check_area) {
+      const err = new Error("Area not found");
+      err.statusCode = 404;
+      throw err;
     }
-    res.status(200).json({message: 'Fetched Area', area: check_area})
-  }catch (err) {
+    const list = await House.find({
+      area_id: areaId,
+      status: { $ne: config.get("booking_status.maintaining") },
+    });
+    res.status(200).json({ message: "Fetched Houses of Area", list: list });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
+
+exports.area = async (req, res, next) => {
+  try {
+    const areaId = req.params.areaId;
+    const check_area = await Area.findById(areaId);
+    if (!check_area) {
+      const err = new Error("Area not found");
+      err.statusCode = 404;
+      throw err;
+    }
+    res.status(200).json({ message: "Fetched Area", area: check_area });
+  } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;
     }
@@ -80,16 +102,16 @@ exports.area = async (req, res, next) => {
 };
 
 exports.house = async (req, res, next) => {
-  try{
-    const houseId = req.params.houseId
-    const check_house = await House.findById(houseId)
-    if(!check_house){
-     const err = new Error('House not found')
-     err.statusCode = 404
-     throw(err)
+  try {
+    const houseId = req.params.houseId;
+    const check_house = await House.findById(houseId);
+    if (!check_house) {
+      const err = new Error("House not found");
+      err.statusCode = 404;
+      throw err;
     }
-    res.status(200).json({message: 'Fetched House', house: check_house})
-  }catch (err) {
+    res.status(200).json({ message: "Fetched House", house: check_house });
+  } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;
     }
@@ -97,14 +119,14 @@ exports.house = async (req, res, next) => {
   }
 };
 
-exports.province = async (req,res,next) => {
-  try{
-    const list = await ProvinceStatus.find({status: {$gt: 0}})
-    res.status(200).json({message: 'Fetched Province', list: list})
-  }catch (err) {
+exports.province = async (req, res, next) => {
+  try {
+    const list = await ProvinceStatus.find({ status: { $gt: 0 } });
+    res.status(200).json({ message: "Fetched Province", list: list });
+  } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;
     }
     next(err);
   }
-}
+};
