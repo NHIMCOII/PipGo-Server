@@ -2,9 +2,9 @@ const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
 
-const provinceStatusSchema = new Schema(
+const locationStatusSchema = new Schema(
   {
-    name: {
+    province: {
         type: String,
         required: true
     },
@@ -20,4 +20,4 @@ const provinceStatusSchema = new Schema(
   }
 );
 
-module.exports = mongoose.model("Province_Status", provinceStatusSchema);
+module.exports = mongoose.model("Location_Status", locationStatusSchema);

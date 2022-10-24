@@ -10,6 +10,11 @@ const areaSchema = new Schema(
       ref: "Province",
       required: true,
     },
+    district_id: {
+      type: mongoose.Types.ObjectId,
+      ref: "District",
+      required: true,
+    },
     status: {
       type: String,
       required: true,
@@ -57,20 +62,31 @@ areaSchema.statics.prov_dis_cap = function (province, district, capacity) {
         as: "province",
       },
     },
-    { $unwind: { path: "$province" } },
+    {
+      $lookup: {
+        from: "districts",
+        localField: "district_id",
+        foreignField: "_id",
+        as: "district",
+      },
+    },
+    { $unwind: { path: "$province"} },
+    { $unwind: { path: "$district"} },
     {
       $project: {
         province_id: 0,
+        district_id: 0,
         created_at: 0,
         updated_at: 0,
         "province._id": 0,
+        "district._id": 0,
       },
     },
     {
       $match: {
         status: { $ne: config.get("booking_status.maintaining") },
         "province.name": province,
-        "province.district": district,
+        "district.name": district,
         capacity: { $gte: capacity },
       },
     },
@@ -87,20 +103,31 @@ areaSchema.statics.prov_dis = function (province, district) {
         as: "province",
       },
     },
-    { $unwind: { path: "$province" } },
+    {
+      $lookup: {
+        from: "districts",
+        localField: "district_id",
+        foreignField: "_id",
+        as: "district",
+      },
+    },
+    { $unwind: { path: "$province"} },
+    { $unwind: { path: "$district"} },
     {
       $project: {
         province_id: 0,
+        district_id: 0,
         created_at: 0,
         updated_at: 0,
         "province._id": 0,
+        "district._id": 0,
       },
     },
     {
       $match: {
         status: { $ne: config.get("booking_status.maintaining") },
         "province.name": province,
-        "province.district": district,
+        "district.name": district,
       },
     },
   ]).catch((err) => console.log(err));
@@ -117,13 +144,24 @@ areaSchema.statics.prov_cap = function (province, capacity) {
         as: "province",
       },
     },
-    { $unwind: { path: "$province" } },
+    {
+      $lookup: {
+        from: "districts",
+        localField: "district_id",
+        foreignField: "_id",
+        as: "district",
+      },
+    },
+    { $unwind: { path: "$province"} },
+    { $unwind: { path: "$district"} },
     {
       $project: {
         province_id: 0,
+        district_id: 0,
         created_at: 0,
         updated_at: 0,
         "province._id": 0,
+        "district._id": 0,
       },
     },
     {
@@ -146,13 +184,24 @@ areaSchema.statics.prov = function (province) {
         as: "province",
       },
     },
-    { $unwind: { path: "$province" } },
+    {
+      $lookup: {
+        from: "districts",
+        localField: "district_id",
+        foreignField: "_id",
+        as: "district",
+      },
+    },
+    { $unwind: { path: "$province"} },
+    { $unwind: { path: "$district"} },
     {
       $project: {
         province_id: 0,
+        district_id: 0,
         created_at: 0,
         updated_at: 0,
         "province._id": 0,
+        "district._id": 0,
       },
     },
     {
@@ -175,19 +224,68 @@ areaSchema.statics.cap = function (capacity) {
         as: "province",
       },
     },
-    { $unwind: { path: "$province" } },
+    {
+      $lookup: {
+        from: "districts",
+        localField: "district_id",
+        foreignField: "_id",
+        as: "district",
+      },
+    },
+    { $unwind: { path: "$province"} },
+    { $unwind: { path: "$district"} },
     {
       $project: {
         province_id: 0,
+        district_id: 0,
         created_at: 0,
         updated_at: 0,
         "province._id": 0,
+        "district._id": 0,
       },
     },
     {
       $match: {
         status: { $ne: config.get("booking_status.maintaining") },
         capacity: { $gte: capacity },
+      },
+    },
+  ]).catch((err) => console.log(err));
+};
+
+areaSchema.statics.all = function () {
+  return this.aggregate([
+    {
+      $lookup: {
+        from: "provinces",
+        localField: "province_id",
+        foreignField: "_id",
+        as: "province",
+      },
+    },
+    {
+      $lookup: {
+        from: "districts",
+        localField: "district_id",
+        foreignField: "_id",
+        as: "district",
+      },
+    },
+    { $unwind: { path: "$province"} },
+    { $unwind: { path: "$district"} },
+    {
+      $project: {
+        province_id: 0,
+        district_id: 0,
+        created_at: 0,
+        updated_at: 0,
+        "province._id": 0,
+        "district._id": 0,
+      },
+    },
+    {
+      $match: {
+        status: { $ne: config.get("booking_status.maintaining") },
       },
     },
   ]).catch((err) => console.log(err));

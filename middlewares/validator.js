@@ -1,32 +1,10 @@
 const { body, query } = require("express-validator");
 const config = require("config");
 const Province = require("../models/province");
-const Area = require('../models/area')
+const District = require("../models/district");
+const Area = require("../models/area");
 
 exports.profile = [
-  body("provinceId")
-    .custom(async (value, { req }) => {
-      try {
-        const check_province = await Province.findById(value);
-        if (!check_province) {
-          const err = new Error("Province not found");
-          err.statusCode = 404;
-          throw err;
-        }
-        return true;
-      } catch (err) {
-        if (!err.statusCode) {
-          err.statusCode = 500;
-        }
-        next(err);
-      }
-    })
-    .withMessage("Province invalid")
-    .optional({ nullable: true, checkFalsy: true }),
-  body("addressDetails")
-    .isAlphanumeric("vi-VN", { ignore: " -,./()" })
-    .withMessage("Address details must not contain special character")
-    .optional({ nullable: true, checkFalsy: true }),
   body("email")
     .trim()
     .isEmail()
@@ -155,28 +133,8 @@ exports.category = [
 ];
 
 exports.area = [
-  body("provinceId")
-    .exists()
-    .withMessage("Province is required")
-    .bail()
-    .custom(async (value, { req }) => {
-      try {
-        const check_province = await Province.findById(value);
-        if (!check_province) {
-          const err = new Error("Province not found");
-          err.statusCode = 404;
-          throw err;
-        }
-        return true;
-      } catch (err) {
-        if (!err.statusCode) {
-          err.statusCode = 500;
-        }
-        next(err);
-      }
-    })
-    .withMessage("Province invalid")
-    .bail(),
+  body("province").exists().withMessage("Province is required").bail(),
+  body("district").exists().withMessage("District is required").bail(),
   body("name")
     .exists()
     .withMessage("Area name is required")

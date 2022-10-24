@@ -1,7 +1,7 @@
 const { validationResult } = require("express-validator");
 
 const Province = require("../models/province");
-const ProvinceStatus = require("../models/provinceStatus");
+const LocationStatus = require("../models/locationStatus");
 const Area = require("../models/area");
 const House = require("../models/house");
 const config = require("config");
@@ -46,9 +46,8 @@ exports.filter = async (req, res, next) => {
         // Capacity
         list = await Area.cap(capacity);
       } else {
-        list = await Area.find({
-          status: { $ne: config.get("booking_status.maintaining") },
-        });
+        // No filter
+        list = await Area.all()
       }
     }
 
@@ -121,7 +120,7 @@ exports.house = async (req, res, next) => {
 
 exports.province = async (req, res, next) => {
   try {
-    const list = await ProvinceStatus.find({ status: { $gt: 0 } });
+    const list = await LocationStatus.find({ status: { $gt: 0 } });
     res.status(200).json({ message: "Fetched Province", list: list });
   } catch (err) {
     if (!err.statusCode) {

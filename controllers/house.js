@@ -118,8 +118,8 @@ exports.deleteHouse = async (req, res, next) => {
   try {
     const houseId = req.params.houseId;
     await House.deleteOne({ _id: houseId });
-    // HouseFile.deleteMany({area_id: houseId})
-    // HouseImage.deleteMany({area_id: houseId})
+    HouseFile.deleteMany({area_id: houseId})
+    HouseImage.deleteMany({area_id: houseId})
     res.status(200).json({ message: "House Deleted" });
   } catch (err) {
     if (!err.statusCode) {

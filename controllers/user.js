@@ -99,7 +99,7 @@ exports.updateProfile = async (req, res, next) => {
       error.data = errors.array();
       throw error;
     }
-    const { provinceId,addressDetails,email, phone, firstName, lastName, gender, dob, avatar } = req.body;
+    const { email, phone, firstName, lastName, gender, dob, avatar } = req.body;
     const userId = req.params.userId;
     const check_user = await User.findById(userId);
     const check_email = await User.findOne({email: email,role: check_user.role})
@@ -121,8 +121,6 @@ exports.updateProfile = async (req, res, next) => {
     check_user.gender = gender;
     check_user.dob = dob;
     check_user.avatar = avatar;
-    check_user.address.province_id = provinceId
-    check_user.address.details = addressDetails
 
     await check_user.save();
     res.status(200).json({ message: "User Updated", user: check_user });

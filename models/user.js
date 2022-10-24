@@ -5,11 +5,11 @@ const Schema = mongoose.Schema;
 
 const userSchema = new Schema(
   {
-    contracts: [{ type: mongoose.Types.ObjectId, ref: "Contract" }],
-    address: {
-      province_id: { type: mongoose.Types.ObjectId, ref: "Province" },
-      details: String,
-    },
+    // contracts: [{ type: mongoose.Types.ObjectId, ref: "Contract" }],
+    // address: {
+    //   province_id: { type: mongoose.Types.ObjectId, ref: "Province" },
+    //   details: String,
+    // },
     role: {
       type: String,
       required: true,

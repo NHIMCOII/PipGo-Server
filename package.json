@@ -7,7 +7,7 @@
     "start": "nodemon ./bin/www",
     "start:dev": "nodemon ./bin/www",
     "seed_admin": "npx run-func .\\utils\\seeder.js adminInit",
-    "seed_province": "npx run-func .\\utils\\seeder.js provinceInit",
+    "seed_location": "npx run-func .\\utils\\seeder.js locationInit",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "DuyAnh",
