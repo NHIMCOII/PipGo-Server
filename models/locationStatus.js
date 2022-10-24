@@ -20,4 +20,30 @@ const locationStatusSchema = new Schema(
   }
 );
 
+locationStatusSchema.statics.groupByProvince = function () {
+  return this.aggregate([
+    {
+      $match: {
+        status: { $gt: 0},
+      },
+    },
+    {
+      $group: {
+        _id: "$province",
+        district: {$push:{name: "$district"}}
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        province: '$_id',
+        districts: "$district.name"
+      }
+    },
+    {
+      $sort: {province: 1}
+    }
+  ]).catch((err) => console.log(err));
+};
+
 module.exports = mongoose.model("Location_Status", locationStatusSchema);

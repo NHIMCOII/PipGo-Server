@@ -15,6 +15,6 @@ router.get('/area/:areaId',searchController.area)
 
 router.get('/house/:houseId',searchController.house)
 
-router.get('/province',searchController.province)
+router.get('/location',searchController.location)
 
 module.exports = router;

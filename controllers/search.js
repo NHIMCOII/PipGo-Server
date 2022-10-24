@@ -118,9 +118,9 @@ exports.house = async (req, res, next) => {
   }
 };
 
-exports.province = async (req, res, next) => {
+exports.location = async (req, res, next) => {
   try {
-    const list = await LocationStatus.find({ status: { $gt: 0 } });
+    const list = await LocationStatus.groupByProvince();
     res.status(200).json({ message: "Fetched Province", list: list });
   } catch (err) {
     if (!err.statusCode) {
