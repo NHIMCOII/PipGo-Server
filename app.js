@@ -3,11 +3,9 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-// const helmet = require("helmet");
-// const compression = require("compression");
 // const morgan = require("morgan");
 
-const authRoutes = require("./routes/auth");
+const authRoutes = require("./routes/auth"); 
 const userRoutes = require("./routes/user");
 const categoryRoutes = require("./routes/category");
 const fileImageRoutes = require("./routes/fileImage");
@@ -31,8 +29,6 @@ const corsOptions = {
 // app.use(express.static(path.join(__dirname, "public")));
 app.use(bodyParser.json());
 app.use(cors(corsOptions));
-// app.use(helmet());
-// app.use(compression());
 // app.use(morgan("combined", { stream: accessLogStream }));
 
 // ======================= Routes =========================

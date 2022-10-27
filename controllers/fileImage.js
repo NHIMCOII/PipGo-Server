@@ -1,5 +1,5 @@
 const { validationResult } = require("express-validator");
-
+const mongoose = require('mongoose')
 const AreaImage = require("../models/areaImage");
 const HouseImage = require("../models/houseImage");
 const AreaFile = require("../models/areaFile");
@@ -11,10 +11,67 @@ exports.viewAllImage = (type) => {
         const { areaId, houseId } = req.query;
         let list = [];
         if (type == "area") {
-          list = await AreaImage.find({ area_id: areaId }).populate("category_id");
+          list = await AreaImage.aggregate([
+            {
+              $match: {
+                area_id: mongoose.Types.ObjectId(areaId) ,
+              },
+            },
+            {
+              $lookup: {
+                from: "area_categories",
+                localField: "category_id",
+                foreignField: "_id",
+                as: "category"
+              }
+            },
+            { $unwind: { path: "$category"} },
+            {
+              $group: {
+                _id: "$category.name",
+                images: {$push:{_id: "$_id",url: "$url",desc: "$desc"}},
+                
+              },
+            },
+            {
+              $project: {
+                _id: 0,
+                category: "$_id",
+                images: "$images"
+              }
+            },
+          ])
         } else if (type == "house") {
-          list = await HouseImage.find({ house_id: houseId }).populate("category_id");
-        } else {
+          list = await HouseImage.aggregate([
+            {
+              $match: {
+                house_id: mongoose.Types.ObjectId(houseId) ,
+              },
+            },
+            {
+              $lookup: {
+                from: "house_categories",
+                localField: "category_id",
+                foreignField: "_id",
+                as: "category"
+              }
+            },
+            { $unwind: { path: "$category"} },
+            {
+              $group: {
+                _id: "$category.name",
+                images: {$push:{_id: "$_id",url: "$url",desc: "$desc"}},
+                
+              },
+            },
+            {
+              $project: {
+                _id: 0,
+                category: "$_id",
+                images: "$images"
+              }
+            },
+          ])} else {
           res.status(404).json({ error: "Type must be area or house" });
         }
   
