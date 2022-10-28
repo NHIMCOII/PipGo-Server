@@ -49,6 +49,11 @@ exports.addArea = async (req, res, next) => {
       err.statusCode = 404
       throw err
     }
+    if(check_district.province_code!= check_province.code){
+      const err = new Error('Wrong province, district input')
+      err.statusCode = 400
+      throw err
+    }
     
     const check_area = await Area.findOne({
       name: name,
@@ -115,14 +120,14 @@ exports.updateArea = async (req, res, next) => {
     const check_area = await Area.findById(areaId);
     const check_province = await Province.findOne({name: province})
     const check_district = await District.findOne({name: district})
-    if(check_district.province_code!= check_province.code){
-      const err = new Error('Wrong province, district input')
-      err.statusCode = 400
-      throw err
-    }
     if(!check_province || !check_district){
       const err = new Error('Not found province or district')
       err.statusCode = 404
+      throw err
+    }
+    if(check_district.province_code!= check_province.code){
+      const err = new Error('Wrong province, district input')
+      err.statusCode = 400
       throw err
     }
 
