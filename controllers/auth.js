@@ -68,14 +68,18 @@ exports.generateToken = async (req, res, next) => {
     const { refresh_token } = req.body;
 
     if (!refresh_token) {
-      throw new Error("Not authenticated");
+      const err =  new Error("Not authenticated");
+      err.statusCode = 401;
+      throw err
     }
 
     let check_user = await User.findOne({
       refresh_token: refresh_token,
     });
     if (!check_user) {
-      throw new Error("Not authenticated");
+      const err =  new Error("Refresh token not found");
+      err.statusCode = 404;
+      throw err
     }
 
     jwt.verify(
@@ -83,7 +87,9 @@ exports.generateToken = async (req, res, next) => {
       process.env.REFRESH_TOKEN_SECRET,
       (err, check_user) => {
         if (err) {
-          throw new Error("Invalid Token");
+          const err =  new Error("Invalid Token");
+          err.statusCode = 400;
+          throw err 
         }
 
         let user = {

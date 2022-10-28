@@ -12,7 +12,9 @@ exports.viewCategory = (type) => {
         } else if (type == "house") {
           list = await HouseCategory.find();
         } else {
-          res.status(404).json({ error: "Must be area or house category" });
+          const err = new Error("Category must be area or house");
+          err.statusCode = 400;
+          throw err 
         }
   
         res
@@ -43,17 +45,23 @@ exports.viewCategory = (type) => {
         if (type == "area") {
           const check_area = await AreaCategory.findOne({ name: name });
           if (check_area) {
-            throw new Error("This category is already exists");
+            const err = new Error("This category is already exists");
+            err.statusCode = 400;
+            throw err 
           }
           category = new AreaCategory({ name: name });
         } else if (type == "house") {
           const check_house = await HouseCategory.findOne({ name: name });
           if (check_house) {
-            throw new Error("This category is already exists");
+            const err = new Error("This category is already exists");
+            err.statusCode = 400;
+            throw err 
           }
           category = new HouseCategory({ name: name });
         } else {
-          res.status(404).json({ error: "Category must be area or house" });
+          const err = new Error("Category must be area or house");
+          err.statusCode = 400;
+          throw err 
         }
   
         await category.save();
@@ -86,19 +94,25 @@ exports.viewCategory = (type) => {
         if (type == "area") {
           const check_area = await AreaCategory.findById(categoryId);
           if (!check_area) {
-            throw new Error("This category dont exist");
+            const err = new Error("This category doesnt exist");
+            err.statusCode = 404;
+            throw err 
           }
           check_area.name = name
           result = await check_area.save()
         } else if (type == "house") {
           const check_house = await HouseCategory.findById(categoryId);
           if (!check_house) {
-            throw new Error("This category dont exist");
+            const err = new Error("This category doesnt exist");
+            err.statusCode = 404;
+            throw err 
           }
           check_house.name = name
           result = await check_house.save()
         } else {
-          res.status(404).json({ error: "Category must be area or house" });
+          const err = new Error("Category must be area or house");
+          err.statusCode = 400;
+          throw err 
         }
   
         res
@@ -121,17 +135,23 @@ exports.viewCategory = (type) => {
         if (type == "area") {
           const check_area = await AreaCategory.findById(categoryId);
           if (!check_area) {
-            throw new Error("This category dont exist");
+            const err = new Error("This category doesnt exist");
+            err.statusCode = 404;
+            throw err 
           }
           await AreaCategory.deleteOne({ _id: categoryId })
         } else if (type == "house") {
           const check_house = await HouseCategory.findById(categoryId);
           if (!check_house) {
-            throw new Error("This category dont exist");
+            const err = new Error("This category doesnt exist");
+            err.statusCode = 404;
+            throw err 
           }
           await HouseCategory.deleteOne({ _id: categoryId })
         } else {
-          res.status(404).json({ error: "Category must be area or house" });
+          const err = new Error("Category must be area or house");
+          err.statusCode = 400;
+          throw err 
         }
   
         res

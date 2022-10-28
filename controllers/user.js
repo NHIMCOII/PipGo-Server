@@ -19,7 +19,9 @@ exports.register = async (req, res, next) => {
 
     const { role, email, phone, firstName, lastName, gender, dob } = req.body;
     if(!role){
-      throw new Error('Role is required')
+      const err =  new Error('Role is required')
+      err.statusCode = 422
+      throw err
     }
 
     const check_user = await User.findOne({
@@ -27,9 +29,11 @@ exports.register = async (req, res, next) => {
       role: role,
     });
     if (check_user) {
-      throw new Error(
+      const err = new Error(
         "This account is already in use, please pick a different one."
       );
+      err.statusCode = 400
+      throw err
     }
 
     const salt = await bcrypt.genSalt();
