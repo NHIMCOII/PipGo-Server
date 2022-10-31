@@ -1,7 +1,5 @@
 const { body, query } = require("express-validator");
 const config = require("config");
-const Province = require("../models/province");
-const District = require("../models/district");
 const Area = require("../models/area");
 
 exports.profile = [
@@ -128,7 +126,7 @@ exports.category = [
     .withMessage("Category name is required")
     .bail()
     .trim()
-    .isAlphanumeric("vi-VN", { ignore: " -" })
+    .isAlphanumeric("vi-VN", { ignore: " -,." })
     .withMessage("Category name must not contain special character"),
 ];
 
@@ -140,7 +138,7 @@ exports.area = [
     .withMessage("Area name is required")
     .bail()
     .trim()
-    .isAlphanumeric("vi-VN", { ignore: " -," })
+    .isAlphanumeric("vi-VN", { ignore: " -,." })
     .withMessage("Area name must not contain special character"),
   body("capacity")
     .exists()
@@ -170,6 +168,8 @@ exports.area = [
     .withMessage("Maximum price must be an integer greater than min price")
     .bail(),
   body("desc")
+    .isAlphanumeric("vi-VN", { ignore: " -,." })
+    .withMessage("Area description must not contain special character")
     .isLength({ max: config.get("desc_length") })
     .withMessage(
       `Description cant be over ${config.get("desc_length")} characters`
@@ -206,7 +206,7 @@ exports.house = [
     .withMessage("House name is required")
     .bail()
     .trim()
-    .isAlphanumeric("vi-VN", { ignore: " -," })
+    .isAlphanumeric("vi-VN", { ignore: " -,." })
     .withMessage("House name must not contain special character"),
   body("quantity")
     .exists()
@@ -223,6 +223,8 @@ exports.house = [
     .withMessage("Price must be an integer greater than 0")
     .bail(),
   body("desc")
+    .isAlphanumeric("vi-VN", { ignore: " -,." })
+    .withMessage("House description must not contain special character")
     .isLength({ max: config.get("desc_length") })
     .withMessage(
       `Description cant be over ${config.get("desc_length")} characters`
@@ -233,8 +235,9 @@ exports.house = [
 
 exports.image = [
   body("categoryId").exists().withMessage("Category is required").bail(),
-  body("url").exists().withMessage("Image is required").bail().trim(),
   body("desc")
+    .isAlphanumeric("vi-VN", { ignore: " -,." })
+    .withMessage("Image description must not contain special character")
     .isLength({ max: config.get("desc_length") })
     .withMessage(
       `Description cant be over ${config.get("desc_length")} characters`
@@ -244,7 +247,6 @@ exports.image = [
 ];
 
 exports.file = [
-  body("url").exists().withMessage("File is required").bail().trim(),
   body("name")
     .exists()
     .withMessage("File name is required")
@@ -257,8 +259,9 @@ exports.file = [
     .withMessage(
       `File name cant be over ${config.get("name_length")} characters`
     ),
-  body("imageUrl").optional({ nullable: true, checkFalsy: true }).trim(),
   body("desc")
+    .isAlphanumeric("vi-VN", { ignore: " -,." })
+    .withMessage("File description must not contain special character")
     .isLength({ max: config.get("desc_length") })
     .optional({ nullable: true, checkFalsy: true })
     .trim(),
