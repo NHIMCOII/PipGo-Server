@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const config = require('config')
 const { validationResult } = require("express-validator");
 const mongoose = require("mongoose");
 
@@ -246,6 +247,8 @@ exports.deleteImage = (type) => {
 
 
 const clearImage = (filePath) => {
+  if(filePath != config.get("default.avatar")){
     filePath = path.join(__dirname, "..", filePath);
     fs.unlink(filePath, (err) => console.log(err));
+  }
   };

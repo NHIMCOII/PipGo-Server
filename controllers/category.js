@@ -98,6 +98,12 @@ exports.viewCategory = (type) => {
             err.statusCode = 404;
             throw err 
           }
+          const check_name = await AreaCategory.findOne({name: name})
+          if(check_name && name != check_area.name){
+            const err = new Error("This category is already exists");
+            err.statusCode = 400;
+            throw err 
+          }
           check_area.name = name
           result = await check_area.save()
         } else if (type == "house") {
@@ -105,6 +111,12 @@ exports.viewCategory = (type) => {
           if (!check_house) {
             const err = new Error("This category doesnt exist");
             err.statusCode = 404;
+            throw err 
+          }
+          const check_name = await HouseCategory.findOne({name: name})
+          if(check_name&& name != check_house.name){
+            const err = new Error("This category is already exists");
+            err.statusCode = 400;
             throw err 
           }
           check_house.name = name

@@ -1,7 +1,7 @@
 const express = require("express");
 
 const { authToken, authRole } = require("../middlewares/is-auth");
-const {} = require("../middlewares/permission");
+const upload_multer = require("../middlewares/upload-multer");
 const validator = require("../middlewares/validator");
 const houseController = require("../controllers/house");
 
@@ -13,6 +13,7 @@ router.post(
   "/add",
   authToken,
   authRole(["admin","sale_user"]),
+  upload_multer.image.single("avatar"),
   validator.house,
   houseController.addHouse
 );
@@ -21,6 +22,7 @@ router.put(
   "/update/:houseId",
   authToken,
   authRole(["admin","sale_user"]),
+  upload_multer.image.single("avatar"),
   validator.house,
   houseController.updateHouse
 );

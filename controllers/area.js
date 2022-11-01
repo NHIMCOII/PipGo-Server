@@ -1,3 +1,6 @@
+const fs = require("fs");
+const path = require("path");
+const config = require('config')
 const { validationResult } = require("express-validator");
 
 const Area = require("../models/area");
@@ -38,9 +41,12 @@ exports.addArea = async (req, res, next) => {
       capacity,
       minPrice,
       maxPrice,
-      avatar,
       desc,
     } = req.body;
+    let avatar
+    if(req.file) {
+      avatar = req.file.path.replace(/\\/g, "/");
+    }
 
     const check_province = await Province.findOne({name: province})
     const check_district = await District.findOne({name: district})
@@ -112,10 +118,10 @@ exports.updateArea = async (req, res, next) => {
       capacity,
       minPrice,
       maxPrice,
-      avatar,
       desc,
       video,
     } = req.body;
+
     const areaId = req.params.areaId;
     const check_area = await Area.findById(areaId);
     const check_province = await Province.findOne({name: province})
@@ -158,7 +164,11 @@ exports.updateArea = async (req, res, next) => {
     check_area.capacity = capacity;
     check_area.price.min = minPrice;
     check_area.price.max = maxPrice;
-    check_area.avatar = avatar;
+    if(req.file){
+      clearFile(check_area.avatar)
+      check_area.avatar = req.file.path.replace(/\\/g, "/");
+    }
+    
     check_area.desc = desc;
     check_area.video = video;
     await check_area.save();
@@ -185,12 +195,39 @@ exports.deleteArea = async (req, res, next) => {
       throw err
     }
     locationStatus_helper.delete(check_area)
+
+    clearFile(check_area.avatar)
     await Area.deleteOne({ _id: areaId });
+    const houses = await House.find({area_id: areaId})
+    houses.map(house => {
+      clearFile(house.avatar)
+    })
     await House.deleteMany({ area_id: areaId });
     // Remember to delete house's files and images, do FE need url to delete images and files
+    const areaFiles = await AreaFile.find({area_id: areaId})
+    areaFiles.map(file => {
+      clearFile(file.url)
+      clearFile(file.imageUrl)
+    })
     AreaFile.deleteMany({ area_id: areaId });
+
+    const areaImages = await AreaImage.find({area_id: areaId})
+    areaImages.map(image => {
+      clearFile(image.url)
+    })
     AreaImage.deleteMany({ area_id: areaId });
+
+    const houseFiles = await HouseFile.find({house_id: check_house._id})
+    houseFiles.map(file => {
+      clearFile(file.url)
+      clearFile(file.imageUrl)
+    })
     HouseFile.deleteMany({ house_id: check_house._id });
+
+    const houseImages = await HouseImage.find({house_id: check_house._id})
+    houseImages.map(image => {
+      clearFile(image.url)
+    })
     HouseImage.deleteMany({ house_id: check_house._id });
 
     res.status(200).json({ message: "Area Deleted" });
@@ -199,5 +236,12 @@ exports.deleteArea = async (req, res, next) => {
       err.statusCode = 500;
     }
     next(err);
+  }
+};
+
+const clearFile = (filePath) => {
+  if(filePath != config.get("default.avatar")){
+    filePath = path.join(__dirname, "..", filePath);
+    fs.unlink(filePath, (err) => console.log(err));
   }
 };

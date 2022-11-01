@@ -7,17 +7,17 @@ const categoryController = require("../controllers/category");
 const router = express.Router();
 
 router.get(
-    "/areaCategory",
+    "/area",
     categoryController.viewCategory("area")
   );
   
   router.get(
-    "/houseCategory",
+    "/house",
     categoryController.viewCategory("house")
   );
   
   router.post(
-    "/addAreaCategory",
+    "/areaAdd",
     authToken,
     authRole(["editor", "admin"]),
     validator.category,
@@ -25,7 +25,7 @@ router.get(
   );
   
   router.post(
-    "/addHouseCategory",
+    "/houseAdd",
     authToken,
     authRole(["editor", "admin"]),
     validator.category,
@@ -33,7 +33,7 @@ router.get(
   );
   
   router.put(
-    "/updateAreaCategory/:categoryId",
+    "/areaUpdate/:categoryId",
     authToken,
     authRole(["editor", "admin"]),
     validator.category,
@@ -41,7 +41,7 @@ router.get(
   );
   
   router.put(
-    "/updateHouseCategory/:categoryId",
+    "/houseUpdate/:categoryId",
     authToken,
     authRole(["editor", "admin"]),
     validator.category,
@@ -49,14 +49,14 @@ router.get(
   );
   
   router.delete(
-    "/deleteAreaCategory/:categoryId",
+    "/areaDelete/:categoryId",
     authToken,
     authRole(['editor',"admin"]),
     categoryController.deleteCategory('area')
   );
   
   router.delete(
-    "/deleteHouseCategory/:categoryId",
+    "/houseDelete/:categoryId",
     authToken,
     authRole(['editor',"admin"]),
     categoryController.deleteCategory('house')

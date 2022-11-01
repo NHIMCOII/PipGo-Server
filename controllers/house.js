@@ -1,3 +1,6 @@
+const fs = require("fs");
+const path = require("path");
+const config = require('config')
 const { validationResult } = require("express-validator");
 
 const House = require("../models/house");
@@ -27,7 +30,11 @@ exports.addHouse = async (req, res, next) => {
       throw error;
     }
 
-    const { areaId, name,type, quantity, price, avatar, desc } = req.body;
+    const { areaId, name,type, quantity, price, desc } = req.body;
+    let avatar
+    if(req.file) {
+      avatar = req.file.path.replace(/\\/g, "/");
+    }
 
     const check_house = await House.findOne({
       name: name,
@@ -72,7 +79,7 @@ exports.updateHouse = async (req, res, next) => {
       throw error;
     }
 
-    const { areaId, status, name,type,  quantity, price, avatar, desc } = req.body;
+    const { areaId, status, name,type,  quantity, price, desc } = req.body;
     const houseId = req.params.houseId;
     const check_house = await House.findById(houseId);
 
@@ -99,13 +106,16 @@ exports.updateHouse = async (req, res, next) => {
     check_house.name = name;
     check_house.quantity = quantity;
     check_house.price = price;
-    check_house.avatar = avatar;
+    if(req.file){
+      clearFile(check_house.avatar)
+      check_house.avatar = req.file.path.replace(/\\/g, "/");
+    }
     check_house.desc = desc;
 
     await check_house.save();
     res
       .status(201)
-      .json({ message: "Updated Area Successfully", area: check_house });
+      .json({ message: "Updated Area Successfully", house: check_house });
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;
@@ -117,14 +127,36 @@ exports.updateHouse = async (req, res, next) => {
 exports.deleteHouse = async (req, res, next) => {
   try {
     const houseId = req.params.houseId;
+    const check_house = await House.findById(houseId)
+    clearFile(check_house.avatar)
     await House.deleteOne({ _id: houseId });
-    HouseFile.deleteMany({area_id: houseId})
-    HouseImage.deleteMany({area_id: houseId})
+
+    const files  = await HouseFile.find({house_id: houseId})
+    files.map(file => {
+      clearFile(file.url)
+      clearFile(file.imageUrl)
+    })
+    HouseFile.deleteMany({house_id: houseId})
+
+    const images = await HouseImage.find({house_id: houseId})
+    images.map(image => {
+      clearFile(image.url)
+    })
+    HouseImage.deleteMany({house_id: houseId})
+
     res.status(200).json({ message: "House Deleted" });
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;
     }
     next(err);
+  }
+};
+
+
+const clearFile = (filePath) => {
+  if(filePath != config.get("default.avatar")){
+    filePath = path.join(__dirname, "..", filePath);
+    fs.unlink(filePath, (err) => console.log(err));
   }
 };

@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const config = require('config')
 const { validationResult } = require("express-validator");
 
 const AreaFile = require("../models/areaFile");
@@ -11,7 +12,7 @@ exports.viewAllFile = (type) => {
       const { areaId, houseId } = req.query;
       let list = [];
       if (type == "area") {
-        list = await AreaFile.find({ area_id: areaId });
+        list = await AreaFile.find({ area_id: areaId }); 
       } else if (type == "house") {
         list = await HouseFile.find({ house_id: houseId });
       } else {
@@ -117,14 +118,15 @@ exports.editFile = (type) => {
         err.statusCode = 404;
         throw err;
       }
-
       check_file.name = name;
       if(req.files.file) {
         clearFile(check_file.url)
         check_file.url = req.files.file[0].path.replace(/\\/g, "/");
       }
       if(req.files.image){
-        clearFile(check_file.imageUrl)
+        if(check_file.imageUrl){
+          clearFile(check_file.imageUrl)
+        }
         check_file.imageUrl =  req.files.image[0].path.replace(/\\/g, "/");
       }
       check_file.desc = desc;
@@ -173,6 +175,8 @@ exports.deleteFile = (type) => {
 };
 
 const clearFile = (filePath) => {
-  filePath = path.join(__dirname, "..", filePath);
-  fs.unlink(filePath, (err) => console.log(err));
+  if(filePath != config.get("default.avatar")){
+    filePath = path.join(__dirname, "..", filePath);
+    fs.unlink(filePath, (err) => console.log(err));
+  }
 };

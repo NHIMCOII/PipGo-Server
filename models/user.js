@@ -20,6 +20,10 @@ const userSchema = new Schema(
       required: true,
       default: 1,
     },
+    contact:{
+      type: Number,
+      default: 0
+    },
     email: {
       type: String,
       required: true,
