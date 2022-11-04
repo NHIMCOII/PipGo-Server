@@ -30,7 +30,7 @@ exports.addHouse = async (req, res, next) => {
       throw error;
     }
 
-    const { areaId, name,type, quantity, price, desc } = req.body;
+    const { areaId, name, quantity, price, desc } = req.body;
     let avatar
     if(req.file) {
       avatar = req.file.path.replace(/\\/g, "/");
@@ -51,7 +51,6 @@ exports.addHouse = async (req, res, next) => {
 
     const house = new House({
       area_id: areaId,
-      type: type,
       name: name,
       quantity: new Number(quantity),
       price: price,
@@ -79,7 +78,7 @@ exports.updateHouse = async (req, res, next) => {
       throw error;
     }
 
-    const { areaId, status, name,type,  quantity, price, desc } = req.body;
+    const { areaId, status, name,  quantity, price, desc } = req.body;
     const houseId = req.params.houseId;
     const check_house = await House.findById(houseId);
 
@@ -102,7 +101,6 @@ exports.updateHouse = async (req, res, next) => {
     }
 
     check_house.status = status;
-    check_house.type = type;
     check_house.name = name;
     check_house.quantity = quantity;
     check_house.price = price;
