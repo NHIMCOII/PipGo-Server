@@ -1,6 +1,6 @@
 const fs = require("fs");
 const path = require("path");
-const config = require('config')
+const config = require("config");
 const { validationResult } = require("express-validator");
 
 const House = require("../models/house");
@@ -31,8 +31,8 @@ exports.addHouse = async (req, res, next) => {
     }
 
     const { areaId, name, quantity, price, desc } = req.body;
-    let avatar
-    if(req.file) {
+    let avatar;
+    if (req.file) {
       avatar = req.file.path.replace(/\\/g, "/");
     }
 
@@ -78,7 +78,7 @@ exports.updateHouse = async (req, res, next) => {
       throw error;
     }
 
-    const { areaId, status, name,  quantity, price, desc } = req.body;
+    const { areaId, status, name, quantity, price, desc } = req.body;
     const houseId = req.params.houseId;
     const check_house = await House.findById(houseId);
 
@@ -104,8 +104,8 @@ exports.updateHouse = async (req, res, next) => {
     check_house.name = name;
     check_house.quantity = quantity;
     check_house.price = price;
-    if(req.file){
-      clearFile(check_house.avatar)
+    if (req.file) {
+      clearFile(check_house.avatar);
       check_house.avatar = req.file.path.replace(/\\/g, "/");
     }
     check_house.desc = desc;
@@ -125,22 +125,22 @@ exports.updateHouse = async (req, res, next) => {
 exports.deleteHouse = async (req, res, next) => {
   try {
     const houseId = req.params.houseId;
-    const check_house = await House.findById(houseId)
-    clearFile(check_house.avatar)
+    const check_house = await House.findById(houseId);
+    clearFile(check_house.avatar);
     await House.deleteOne({ _id: houseId });
 
-    const files  = await HouseFile.find({house_id: houseId})
-    files.map(file => {
-      clearFile(file.url)
-      clearFile(file.imageUrl)
-    })
-    HouseFile.deleteMany({house_id: houseId})
+    const files = await HouseFile.find({ house_id: houseId });
+    files.map((file) => {
+      clearFile(file.url);
+      clearFile(file.imageUrl);
+    });
+    HouseFile.deleteMany({ house_id: houseId });
 
-    const images = await HouseImage.find({house_id: houseId})
-    images.map(image => {
-      clearFile(image.url)
-    })
-    HouseImage.deleteMany({house_id: houseId})
+    const images = await HouseImage.find({ house_id: houseId });
+    images.map((image) => {
+      clearFile(image.url);
+    });
+    HouseImage.deleteMany({ house_id: houseId });
 
     res.status(200).json({ message: "House Deleted" });
   } catch (err) {
@@ -151,10 +151,13 @@ exports.deleteHouse = async (req, res, next) => {
   }
 };
 
-
 const clearFile = (filePath) => {
-  if(filePath != config.get("default.avatar")){
+  if (filePath != config.get("default.avatar")) {
     filePath = path.join(__dirname, "..", filePath);
-    fs.unlink(filePath, (err) => console.log(err));
+    fs.unlink(filePath, (err) => {
+      if (err) {
+        console.log(err);
+      }
+    });
   }
 };

@@ -18,10 +18,10 @@ exports.register = async (req, res, next) => {
     }
 
     const { role, email, phone, firstName, lastName, gender, dob } = req.body;
-    if(!role){
-      const err =  new Error('Role is required')
-      err.statusCode = 422
-      throw err
+    if (!role) {
+      const err = new Error("Role is required");
+      err.statusCode = 422;
+      throw err;
     }
 
     const check_user = await User.findOne({
@@ -32,8 +32,8 @@ exports.register = async (req, res, next) => {
       const err = new Error(
         "This account is already in use, please pick a different one."
       );
-      err.statusCode = 400
-      throw err
+      err.statusCode = 400;
+      throw err;
     }
 
     const salt = await bcrypt.genSalt();
@@ -106,12 +106,17 @@ exports.updateProfile = async (req, res, next) => {
     const { email, phone, firstName, lastName, gender, dob, avatar } = req.body;
     const userId = req.params.userId;
     const check_user = await User.findById(userId);
-    const check_email = await User.findOne({email: email,role: check_user.role})
+    const check_email = await User.findOne({
+      email: email,
+      role: check_user.role,
+    });
 
-    if(check_email && email != check_user.email){
-      const err = new Error('This email has already been used, please pick a different one')
-      err.statusCode = 400
-      throw err
+    if (check_email && email != check_user.email) {
+      const err = new Error(
+        "This email has already been used, please pick a different one"
+      );
+      err.statusCode = 400;
+      throw err;
     }
     if (!check_user) {
       const error = new Error("User not found");
@@ -207,4 +212,3 @@ exports.deleteAccount = async (req, res, next) => {
     next(err);
   }
 };
- 

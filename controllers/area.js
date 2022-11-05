@@ -1,12 +1,12 @@
 const fs = require("fs");
 const path = require("path");
-const config = require('config')
+const config = require("config");
 const { validationResult } = require("express-validator");
 
 const Area = require("../models/area");
 const House = require("../models/house");
-const Province = require('../models/province')
-const District = require('../models/district')
+const Province = require("../models/province");
+const District = require("../models/district");
 const AreaImage = require("../models/areaImage");
 const HouseImage = require("../models/houseImage");
 const AreaFile = require("../models/areaFile");
@@ -34,33 +34,26 @@ exports.addArea = async (req, res, next) => {
       throw error;
     }
 
-    const {
-      province,
-      district,
-      name,
-      capacity,
-      minPrice,
-      maxPrice,
-      desc,
-    } = req.body;
-    let avatar
-    if(req.file) {
+    const { province, district, name, capacity, minPrice, maxPrice, desc } =
+      req.body;
+    let avatar;
+    if (req.file) {
       avatar = req.file.path.replace(/\\/g, "/");
     }
 
-    const check_province = await Province.findOne({name: province})
-    const check_district = await District.findOne({name: district})
-    if(!check_province || !check_district){
-      const err = new Error('Not found province or district')
-      err.statusCode = 404
-      throw err
+    const check_province = await Province.findOne({ name: province });
+    const check_district = await District.findOne({ name: district });
+    if (!check_province || !check_district) {
+      const err = new Error("Not found province or district");
+      err.statusCode = 404;
+      throw err;
     }
-    if(check_district.province_code!= check_province.code){
-      const err = new Error('Wrong province, district input')
-      err.statusCode = 400
-      throw err
+    if (check_district.province_code != check_province.code) {
+      const err = new Error("Wrong province, district input");
+      err.statusCode = 400;
+      throw err;
     }
-    
+
     const check_area = await Area.findOne({
       name: name,
       province_id: check_province._id,
@@ -88,7 +81,7 @@ exports.addArea = async (req, res, next) => {
       desc: desc,
     });
 
-    locationStatus_helper.add(province,district);
+    locationStatus_helper.add(province, district);
     await area.save();
 
     res.status(201).json({ message: "New Area Created", area: area });
@@ -124,17 +117,17 @@ exports.updateArea = async (req, res, next) => {
 
     const areaId = req.params.areaId;
     const check_area = await Area.findById(areaId);
-    const check_province = await Province.findOne({name: province})
-    const check_district = await District.findOne({name: district})
-    if(!check_province || !check_district){
-      const err = new Error('Not found province or district')
-      err.statusCode = 404
-      throw err
+    const check_province = await Province.findOne({ name: province });
+    const check_district = await District.findOne({ name: district });
+    if (!check_province || !check_district) {
+      const err = new Error("Not found province or district");
+      err.statusCode = 404;
+      throw err;
     }
-    if(check_district.province_code!= check_province.code){
-      const err = new Error('Wrong province, district input')
-      err.statusCode = 400
-      throw err
+    if (check_district.province_code != check_province.code) {
+      const err = new Error("Wrong province, district input");
+      err.statusCode = 400;
+      throw err;
     }
 
     if (!check_area) {
@@ -156,7 +149,12 @@ exports.updateArea = async (req, res, next) => {
       throw err;
     }
 
-    locationStatus_helper.update(check_area.province_id,check_area.district_id, check_province._id,check_district._id);
+    locationStatus_helper.update(
+      check_area.province_id,
+      check_area.district_id,
+      check_province._id,
+      check_district._id
+    );
     check_area.status = status;
     check_area.province_id = check_province._id;
     check_area.district_id = check_district._id;
@@ -164,11 +162,11 @@ exports.updateArea = async (req, res, next) => {
     check_area.capacity = capacity;
     check_area.price.min = minPrice;
     check_area.price.max = maxPrice;
-    if(req.file){
-      clearFile(check_area.avatar)
+    if (req.file) {
+      clearFile(check_area.avatar);
       check_area.avatar = req.file.path.replace(/\\/g, "/");
     }
-    
+
     check_area.desc = desc;
     check_area.video = video;
     await check_area.save();
@@ -187,47 +185,47 @@ exports.updateArea = async (req, res, next) => {
 exports.deleteArea = async (req, res, next) => {
   try {
     const areaId = req.params.areaId;
-    const check_house = await House.find({area_id: areaId})
+    const check_house = await House.find({ area_id: areaId });
     const check_area = await Area.findById(areaId);
-    if(!check_area){
-      const err = new Error('Area not found')
-      err.statusCode = 404
-      throw err
+    if (!check_area) {
+      const err = new Error("Area not found");
+      err.statusCode = 404;
+      throw err;
     }
-    locationStatus_helper.delete(check_area)
+    locationStatus_helper.delete(check_area);
 
-    clearFile(check_area.avatar)
+    clearFile(check_area.avatar);
     await Area.deleteOne({ _id: areaId });
-    const houses = await House.find({area_id: areaId})
-    houses.map(house => {
-      clearFile(house.avatar)
-    })
+    const houses = await House.find({ area_id: areaId });
+    houses.map((house) => {
+      clearFile(house.avatar);
+    });
     await House.deleteMany({ area_id: areaId });
     // Remember to delete house's files and images, do FE need url to delete images and files
-    const areaFiles = await AreaFile.find({area_id: areaId})
-    areaFiles.map(file => {
-      clearFile(file.url)
-      clearFile(file.imageUrl)
-    })
+    const areaFiles = await AreaFile.find({ area_id: areaId });
+    areaFiles.map((file) => {
+      clearFile(file.url);
+      clearFile(file.imageUrl);
+    });
     AreaFile.deleteMany({ area_id: areaId });
 
-    const areaImages = await AreaImage.find({area_id: areaId})
-    areaImages.map(image => {
-      clearFile(image.url)
-    })
+    const areaImages = await AreaImage.find({ area_id: areaId });
+    areaImages.map((image) => {
+      clearFile(image.url);
+    });
     AreaImage.deleteMany({ area_id: areaId });
 
-    const houseFiles = await HouseFile.find({house_id: check_house._id})
-    houseFiles.map(file => {
-      clearFile(file.url)
-      clearFile(file.imageUrl)
-    })
+    const houseFiles = await HouseFile.find({ house_id: check_house._id });
+    houseFiles.map((file) => {
+      clearFile(file.url);
+      clearFile(file.imageUrl);
+    });
     HouseFile.deleteMany({ house_id: check_house._id });
 
-    const houseImages = await HouseImage.find({house_id: check_house._id})
-    houseImages.map(image => {
-      clearFile(image.url)
-    })
+    const houseImages = await HouseImage.find({ house_id: check_house._id });
+    houseImages.map((image) => {
+      clearFile(image.url);
+    });
     HouseImage.deleteMany({ house_id: check_house._id });
 
     res.status(200).json({ message: "Area Deleted" });
@@ -240,8 +238,12 @@ exports.deleteArea = async (req, res, next) => {
 };
 
 const clearFile = (filePath) => {
-  if(filePath != config.get("default.avatar")){
+  if (filePath != config.get("default.avatar")) {
     filePath = path.join(__dirname, "..", filePath);
-    fs.unlink(filePath, (err) => console.log(err));
+    fs.unlink(filePath, (err) => {
+      if (err) {
+        console.log(err);
+      }
+    });
   }
 };

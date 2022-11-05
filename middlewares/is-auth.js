@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 
 /**
- * JWT 
+ * JWT
  */
 exports.authToken = (req, res, next) => {
   const auth_header = req.headers["authorization"];
@@ -16,20 +16,20 @@ exports.authToken = (req, res, next) => {
         error.statusCode = 403;
         throw error;
       }
-      User.findById(user._id).then(check_user => {
-        req.user = check_user
-        next()
-      })
+      User.findById(user._id).then((check_user) => {
+        req.user = check_user;
+        next();
+      });
     });
-  } else { 
+  } else {
     const error = new Error("Not Authenticated");
     error.statusCode = 401;
     throw error;
   }
 };
 /**
- * Auth Role 
- * @param {[String]} roles 
+ * Auth Role
+ * @param {[String]} roles
  */
 exports.authRole = (roles) => {
   return async (req, res, next) => {

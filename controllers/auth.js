@@ -42,7 +42,7 @@ exports.login = async (req, res, next) => {
       _id: check_user._id,
     };
     const access_token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
-      expiresIn: config.get('default.access_token_exp'),
+      expiresIn: config.get("default.access_token_exp"),
     });
     const refresh_token = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, {
       expiresIn: 60 * 60 * 24 * 90,
@@ -68,18 +68,18 @@ exports.generateToken = async (req, res, next) => {
     const { refresh_token } = req.body;
 
     if (!refresh_token) {
-      const err =  new Error("Not authenticated");
+      const err = new Error("Not authenticated");
       err.statusCode = 401;
-      throw err
+      throw err;
     }
 
     let check_user = await User.findOne({
       refresh_token: refresh_token,
     });
     if (!check_user) {
-      const err =  new Error("Refresh token not found");
+      const err = new Error("Refresh token not found");
       err.statusCode = 404;
-      throw err
+      throw err;
     }
 
     jwt.verify(
@@ -87,9 +87,9 @@ exports.generateToken = async (req, res, next) => {
       process.env.REFRESH_TOKEN_SECRET,
       (err, check_user) => {
         if (err) {
-          const err =  new Error("Invalid Token");
+          const err = new Error("Invalid Token");
           err.statusCode = 400;
-          throw err 
+          throw err;
         }
 
         let user = {
@@ -97,7 +97,7 @@ exports.generateToken = async (req, res, next) => {
         };
 
         const access_token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
-          expiresIn: config.get('default.access_token_exp'),
+          expiresIn: config.get("default.access_token_exp"),
         });
 
         return res.status(200).json({

@@ -20,9 +20,9 @@ const userSchema = new Schema(
       required: true,
       default: 1,
     },
-    contact:{
+    contact: {
       type: Number,
-      default: 0
+      default: 0,
     },
     email: {
       type: String,

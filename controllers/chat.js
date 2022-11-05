@@ -6,7 +6,7 @@ exports.chat = async (req, res, next) => {
       {
         $match: {
           role: "sale_user",
-          status: true
+          status: true,
         },
       },
       {
@@ -15,12 +15,13 @@ exports.chat = async (req, res, next) => {
         },
       },
     ]);
-    const result = await User.findById(list[0]._id)
-    result.contact ++
-    result.save()
+    const result = await User.findById(list[0]._id);
+    result.contact++;
+    result.save();
 
-
-    res.status(200).json({ message: "Received sale_userId", saleId: result._id });
+    res
+      .status(200)
+      .json({ message: "Received sale_userId", saleId: result._id });
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;

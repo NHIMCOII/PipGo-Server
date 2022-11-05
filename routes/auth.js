@@ -9,7 +9,11 @@ router.post("/login", validator.login, authController.login);
 
 router.post("/token", authController.generateToken);
 
-router.put("/reset/:token", validator.resetPassword, authController.resetPassword);
+router.put(
+  "/reset/:token",
+  validator.resetPassword,
+  authController.resetPassword
+);
 
 router.post("/reset", validator.reset, authController.reset);
 

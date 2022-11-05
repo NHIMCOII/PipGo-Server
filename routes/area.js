@@ -7,12 +7,17 @@ const areaController = require("../controllers/area");
 
 const router = express.Router();
 // Remember to add permission middleware when got full insight
-router.get("/list", authToken, authRole(["admin","sale_user"]), areaController.areaList);
+router.get(
+  "/list",
+  authToken,
+  authRole(["admin", "sale_user"]),
+  areaController.areaList
+);
 
 router.post(
   "/add",
   authToken,
-  authRole(["admin","sale_user"]),
+  authRole(["admin", "sale_user"]),
   upload_multer.image.single("avatar"),
   validator.area,
   areaController.addArea
@@ -21,7 +26,7 @@ router.post(
 router.put(
   "/update/:areaId",
   authToken,
-  authRole(["admin","sale_user"]),
+  authRole(["admin", "sale_user"]),
   upload_multer.image.single("avatar"),
   validator.area,
   areaController.updateArea
@@ -30,7 +35,7 @@ router.put(
 router.delete(
   "/delete/:areaId",
   authToken,
-  authRole(["admin","sale_user"]),
+  authRole(["admin", "sale_user"]),
   areaController.deleteArea
 );
 

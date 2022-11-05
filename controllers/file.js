@@ -1,6 +1,6 @@
 const fs = require("fs");
 const path = require("path");
-const config = require('config')
+const config = require("config");
 const { validationResult } = require("express-validator");
 
 const AreaFile = require("../models/areaFile");
@@ -12,7 +12,7 @@ exports.viewAllFile = (type) => {
       const { areaId, houseId } = req.query;
       let list = [];
       if (type == "area") {
-        list = await AreaFile.find({ area_id: areaId }); 
+        list = await AreaFile.find({ area_id: areaId });
       } else if (type == "house") {
         list = await HouseFile.find({ house_id: houseId });
       } else {
@@ -49,9 +49,9 @@ exports.uploadFile = (type) => {
         throw error;
       }
       const url = req.files.file[0].path.replace(/\\/g, "/");
-      let imageUrl
-      if(req.files.image){
-         imageUrl = req.files.image[0].path.replace(/\\/g, "/");
+      let imageUrl;
+      if (req.files.image) {
+        imageUrl = req.files.image[0].path.replace(/\\/g, "/");
       }
 
       let result;
@@ -119,15 +119,15 @@ exports.editFile = (type) => {
         throw err;
       }
       check_file.name = name;
-      if(req.files.file) {
-        clearFile(check_file.url)
+      if (req.files.file) {
+        clearFile(check_file.url);
         check_file.url = req.files.file[0].path.replace(/\\/g, "/");
       }
-      if(req.files.image){
-        if(check_file.imageUrl){
-          clearFile(check_file.imageUrl)
+      if (req.files.image) {
+        if (check_file.imageUrl) {
+          clearFile(check_file.imageUrl);
         }
-        check_file.imageUrl =  req.files.image[0].path.replace(/\\/g, "/");
+        check_file.imageUrl = req.files.image[0].path.replace(/\\/g, "/");
       }
       check_file.desc = desc;
       await check_file.save();
@@ -148,15 +148,15 @@ exports.deleteFile = (type) => {
     try {
       const fileId = req.params.fileId;
       if (type == "area") {
-        const check_file = await AreaFile.findById(fileId)
-        clearFile(check_file.url)
-        clearFile(check_file.imageUrl)
+        const check_file = await AreaFile.findById(fileId);
+        clearFile(check_file.url);
+        clearFile(check_file.imageUrl);
         await AreaFile.deleteOne({ _id: fileId });
       } else if (type == "house") {
-        const check_file = await HouseFile.findById(fileId)
-        clearFile(check_file.url)
-        if(check_file.imageUrl){
-          clearFile(check_file.imageUrl)
+        const check_file = await HouseFile.findById(fileId);
+        clearFile(check_file.url);
+        if (check_file.imageUrl) {
+          clearFile(check_file.imageUrl);
         }
         await HouseFile.deleteOne({ _id: fileId });
       } else {
@@ -175,8 +175,12 @@ exports.deleteFile = (type) => {
 };
 
 const clearFile = (filePath) => {
-  if(filePath != config.get("default.avatar")){
+  if (filePath != config.get("default.avatar")) {
     filePath = path.join(__dirname, "..", filePath);
-    fs.unlink(filePath, (err) => console.log(err));
+    fs.unlink(filePath, (err) => {
+      if (err) {
+        console.log(err);
+      }
+    });
   }
 };

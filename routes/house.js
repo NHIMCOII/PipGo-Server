@@ -7,12 +7,17 @@ const houseController = require("../controllers/house");
 
 const router = express.Router();
 // Remember to add permission middleware when got full insight
-router.get("/list", authToken, authRole(["admin","sale_user"]), houseController.houseList);
+router.get(
+  "/list",
+  authToken,
+  authRole(["admin", "sale_user"]),
+  houseController.houseList
+);
 
 router.post(
   "/add",
   authToken,
-  authRole(["admin","sale_user"]),
+  authRole(["admin", "sale_user"]),
   upload_multer.image.single("avatar"),
   validator.house,
   houseController.addHouse
@@ -21,7 +26,7 @@ router.post(
 router.put(
   "/update/:houseId",
   authToken,
-  authRole(["admin","sale_user"]),
+  authRole(["admin", "sale_user"]),
   upload_multer.image.single("avatar"),
   validator.house,
   houseController.updateHouse
@@ -30,7 +35,7 @@ router.put(
 router.delete(
   "/delete/:houseId",
   authToken,
-  authRole(["admin","sale_user"]),
+  authRole(["admin", "sale_user"]),
   houseController.deleteHouse
 );
 

@@ -2,47 +2,45 @@ const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
 
-const locationStatusSchema = new Schema(
-  {
-    province: {
-        type: String,
-        required: true
-    },
-    district: {
-        type: String,
-        required: true
-    },
-    status: {
-      type: Number,
-      required: true,
-      default: 0
-    }
-  }
-);
+const locationStatusSchema = new Schema({
+  province: {
+    type: String,
+    required: true,
+  },
+  district: {
+    type: String,
+    required: true,
+  },
+  status: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
+});
 
 locationStatusSchema.statics.groupByProvince = function () {
   return this.aggregate([
     {
       $match: {
-        status: { $gt: 0},
+        status: { $gt: 0 },
       },
     },
     {
       $group: {
         _id: "$province",
-        district: {$push:{name: "$district"}}
+        districts: { $push: { name: "$district", quantity: "$status" } },
       },
     },
     {
       $project: {
         _id: 0,
-        province: '$_id',
-        districts: "$district.name"
-      }
+        province: "$_id",
+        districts: "$districts",
+      },
     },
     {
-      $sort: {province: 1}
-    }
+      $sort: { province: 1 },
+    },
   ]).catch((err) => console.log(err));
 };
 

@@ -68,7 +68,7 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-exports.image = multer({ storage: imageStorage, fileFilter: imageFilter })
+exports.image = multer({ storage: imageStorage, fileFilter: imageFilter });
 
 exports.file = multer({
   storage: fileStorage,

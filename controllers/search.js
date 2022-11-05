@@ -1,6 +1,5 @@
 const { validationResult } = require("express-validator");
 
-const Province = require("../models/province");
 const LocationStatus = require("../models/locationStatus");
 const Area = require("../models/area");
 const House = require("../models/house");
@@ -47,7 +46,7 @@ exports.filter = async (req, res, next) => {
         list = await Area.cap(capacity);
       } else {
         // No filter
-        list = await Area.all()
+        list = await Area.all();
       }
     }
 

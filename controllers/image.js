@@ -1,13 +1,12 @@
 const fs = require("fs");
 const path = require("path");
-const config = require('config')
+const config = require("config");
 const { validationResult } = require("express-validator");
-const mongoose = require("mongoose");
 
 const AreaImage = require("../models/areaImage");
 const HouseImage = require("../models/houseImage");
-const AreaCategory = require('../models/areaCategory')
-const HouseCategory = require('../models/houseCategory')
+const AreaCategory = require("../models/areaCategory");
+const HouseCategory = require("../models/houseCategory");
 
 exports.viewAllImage = (type) => {
   return async (req, res, next) => {
@@ -15,65 +14,9 @@ exports.viewAllImage = (type) => {
       const { areaId, houseId } = req.query;
       let list = [];
       if (type == "area") {
-        list = await AreaImage.aggregate([
-          {
-            $match: {
-              area_id: mongoose.Types.ObjectId(areaId),
-            },
-          },
-          {
-            $lookup: {
-              from: "area_categories",
-              localField: "category_id",
-              foreignField: "_id",
-              as: "category",
-            },
-          },
-          { $unwind: { path: "$category" } },
-          {
-            $group: {
-              _id: "$category.name",
-              images: { $push: { _id: "$_id", url: "$url", desc: "$desc" } },
-            },
-          },
-          {
-            $project: {
-              _id: 0,
-              category: "$_id",
-              images: "$images",
-            },
-          },
-        ]);
+        list = await AreaImage.groupByCategory(areaId);
       } else if (type == "house") {
-        list = await HouseImage.aggregate([
-          {
-            $match: {
-              house_id: mongoose.Types.ObjectId(houseId),
-            },
-          },
-          {
-            $lookup: {
-              from: "house_categories",
-              localField: "category_id",
-              foreignField: "_id",
-              as: "category",
-            },
-          },
-          { $unwind: { path: "$category" } },
-          {
-            $group: {
-              _id: "$category.name",
-              images: { $push: { _id: "$_id", url: "$url", desc: "$desc" } },
-            },
-          },
-          {
-            $project: {
-              _id: 0,
-              category: "$_id",
-              images: "$images",
-            },
-          },
-        ]);
+        list = await HouseImage.groupByCategory(houseId);
       } else {
         const err = new Error("Type must be area or house");
         err.statusCode = 400;
@@ -113,11 +56,11 @@ exports.uploadImage = (type) => {
 
       let result;
       if (type == "area") {
-        const check_category = await AreaCategory.findById(categoryId)
-        if(!check_category){
-          const err = new Error("Category not exists")
-          err.statusCode = 404
-          throw err
+        const check_category = await AreaCategory.findById(categoryId);
+        if (!check_category) {
+          const err = new Error("Category not exists");
+          err.statusCode = 404;
+          throw err;
         }
         result = new AreaImage({
           category_id: categoryId,
@@ -126,11 +69,11 @@ exports.uploadImage = (type) => {
           desc: desc,
         });
       } else if (type == "house") {
-        const check_category = await HouseCategory.findById(categoryId)
-        if(!check_category){
-          const err = new Error("Category not exists")
-          err.statusCode = 404
-          throw err
+        const check_category = await HouseCategory.findById(categoryId);
+        if (!check_category) {
+          const err = new Error("Category not exists");
+          err.statusCode = 404;
+          throw err;
         }
         result = new HouseImage({
           category_id: categoryId,
@@ -170,22 +113,22 @@ exports.editImage = (type) => {
 
       const { categoryId, desc } = req.body;
       const imageId = req.params.imageId;
-      
+
       let check_image = null;
       if (type == "area") {
-        const check_category = await AreaCategory.findById(categoryId)
-        if(!check_category){
-          const err = new Error("Category not exists")
-          err.statusCode = 404
-          throw err
+        const check_category = await AreaCategory.findById(categoryId);
+        if (!check_category) {
+          const err = new Error("Category not exists");
+          err.statusCode = 404;
+          throw err;
         }
         check_image = await AreaImage.findById(imageId);
       } else if (type == "house") {
-        const check_category = await HouseCategory.findById(categoryId)
-        if(!check_category){
-          const err = new Error("Category not exists")
-          err.statusCode = 404
-          throw err
+        const check_category = await HouseCategory.findById(categoryId);
+        if (!check_category) {
+          const err = new Error("Category not exists");
+          err.statusCode = 404;
+          throw err;
         }
         check_image = await HouseImage.findById(imageId);
       } else {
@@ -200,8 +143,8 @@ exports.editImage = (type) => {
       }
 
       check_image.category_id = categoryId;
-      if(req.file){
-        clearImage(check_image.url)
+      if (req.file) {
+        clearImage(check_image.url);
         check_image.url = req.file.path.replace(/\\/g, "/");
       }
       check_image.desc = desc;
@@ -223,13 +166,13 @@ exports.deleteImage = (type) => {
     try {
       const imageId = req.params.imageId;
       if (type == "area") {
-        const check_image = await AreaImage.findById(imageId)
-        clearImage(check_image.url)
+        const check_image = await AreaImage.findById(imageId);
+        clearImage(check_image.url);
         await AreaImage.deleteOne({ _id: imageId });
       } else if (type == "house") {
-        const check_image = await HouseImage.findById(imageId)
-        clearImage(check_image.url)
-        await HouseImage.deleteOne({ _id: imageId });  
+        const check_image = await HouseImage.findById(imageId);
+        clearImage(check_image.url);
+        await HouseImage.deleteOne({ _id: imageId });
       } else {
         const err = new Error("Type must be area or house");
         err.statusCode = 400;
@@ -245,10 +188,13 @@ exports.deleteImage = (type) => {
   };
 };
 
-
 const clearImage = (filePath) => {
-  if(filePath != config.get("default.avatar")){
+  if (filePath != config.get("default.avatar")) {
     filePath = path.join(__dirname, "..", filePath);
-    fs.unlink(filePath, (err) => console.log(err));
+    fs.unlink(filePath, (err) => {
+      if (err) {
+        console.log(err);
+      }
+    });
   }
-  };
+};

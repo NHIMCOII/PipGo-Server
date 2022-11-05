@@ -70,8 +70,8 @@ areaSchema.statics.prov_dis_cap = function (province, district, capacity) {
         as: "district",
       },
     },
-    { $unwind: { path: "$province"} },
-    { $unwind: { path: "$district"} },
+    { $unwind: { path: "$province" } },
+    { $unwind: { path: "$district" } },
     {
       $project: {
         province_id: 0,
@@ -111,8 +111,8 @@ areaSchema.statics.prov_dis = function (province, district) {
         as: "district",
       },
     },
-    { $unwind: { path: "$province"} },
-    { $unwind: { path: "$district"} },
+    { $unwind: { path: "$province" } },
+    { $unwind: { path: "$district" } },
     {
       $project: {
         province_id: 0,
@@ -152,8 +152,8 @@ areaSchema.statics.prov_cap = function (province, capacity) {
         as: "district",
       },
     },
-    { $unwind: { path: "$province"} },
-    { $unwind: { path: "$district"} },
+    { $unwind: { path: "$province" } },
+    { $unwind: { path: "$district" } },
     {
       $project: {
         province_id: 0,
@@ -192,8 +192,8 @@ areaSchema.statics.prov = function (province) {
         as: "district",
       },
     },
-    { $unwind: { path: "$province"} },
-    { $unwind: { path: "$district"} },
+    { $unwind: { path: "$province" } },
+    { $unwind: { path: "$district" } },
     {
       $project: {
         province_id: 0,
@@ -232,8 +232,8 @@ areaSchema.statics.cap = function (capacity) {
         as: "district",
       },
     },
-    { $unwind: { path: "$province"} },
-    { $unwind: { path: "$district"} },
+    { $unwind: { path: "$province" } },
+    { $unwind: { path: "$district" } },
     {
       $project: {
         province_id: 0,
@@ -271,8 +271,8 @@ areaSchema.statics.all = function () {
         as: "district",
       },
     },
-    { $unwind: { path: "$province"} },
-    { $unwind: { path: "$district"} },
+    { $unwind: { path: "$province" } },
+    { $unwind: { path: "$district" } },
     {
       $project: {
         province_id: 0,
