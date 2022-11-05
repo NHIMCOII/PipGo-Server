@@ -19,7 +19,7 @@ const areaSchema = new Schema(
       type: String,
       required: true,
       enum: ["available", "maintaining", "fully booked"],
-      default: config.get("booking_status.available"),
+      default: config.get("booking_status.maintaining"),
     },
     name: {
       type: String,
