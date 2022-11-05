@@ -19,7 +19,7 @@ const imageFilter = (req, file, cb) => {
   ) {
     cb(null, true);
   } else {
-    cb(null, false);
+    return cb(new Error("Only Image Format Allowed"));
   }
 };
 
@@ -51,7 +51,7 @@ const fileFilter = (req, file, cb) => {
       // check file type to be pdf, doc, or docx
       cb(null, true);
     } else {
-      cb(null, false); // else fails
+      return cb(new Error("Only File Format Allowed")); // else fails
     }
   } else {
     // else uploading image
@@ -63,7 +63,7 @@ const fileFilter = (req, file, cb) => {
       // check file type to be png, jpeg, or jpg
       cb(null, true);
     } else {
-      cb(null, false); // else fails
+      return cb(new Error("Only Image Format Allowed")); // else fails
     }
   }
 };
