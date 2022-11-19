@@ -1,8 +1,12 @@
+const fs = require("fs");
+const path = require("path");
+const config = require("config");
+
 const Province = require("../models/province");
 const District = require("../models/district");
 const LocationStatus = require("../models/locationStatus");
 
-exports.add = async (province, district) => {
+exports.locationStatusAdd = async (province, district) => {
   try {
     const location_status = await LocationStatus.findOne({
       province: province,
@@ -27,7 +31,7 @@ exports.add = async (province, district) => {
   }
 };
 
-exports.update = async (
+exports.locationStatusUpdate = async (
   oldProvinceId,
   oldDistrictId,
   newProvinceId,
@@ -76,7 +80,7 @@ exports.update = async (
   }
 };
 
-exports.delete = async (check_area) => {
+exports.locationStatusDelete = async (check_area) => {
   try {
     const check_province = await Province.findById(check_area.province_id);
     const check_district = await District.findById(check_area.district_id);
@@ -92,5 +96,16 @@ exports.delete = async (check_area) => {
       throw err;
     }
     throw err;
+  }
+};
+
+exports.clearFile = (filePath) => {
+  if (filePath != config.get("default.avatar")) {
+    filePath = path.join(__dirname, "..", filePath);
+    fs.unlink(filePath, (err) => {
+      if (err) {
+        console.log(err);
+      }
+    });
   }
 };

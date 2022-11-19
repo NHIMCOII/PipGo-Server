@@ -1,10 +1,9 @@
-const fs = require("fs");
-const path = require("path");
-const config = require("config");
 const { validationResult } = require("express-validator");
 
 const AreaFile = require("../models/areaFile");
 const HouseFile = require("../models/houseFile");
+
+const {clearFile} = require("../utils/helper");
 
 exports.viewAllFile = (type) => {
   return async (req, res, next) => {
@@ -172,15 +171,4 @@ exports.deleteFile = (type) => {
       next(err);
     }
   };
-};
-
-const clearFile = (filePath) => {
-  if (filePath != config.get("default.avatar")) {
-    filePath = path.join(__dirname, "..", filePath);
-    fs.unlink(filePath, (err) => {
-      if (err) {
-        console.log(err);
-      }
-    });
-  }
 };

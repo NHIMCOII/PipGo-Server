@@ -1,12 +1,11 @@
-const fs = require("fs");
-const path = require("path");
-const config = require("config");
 const { validationResult } = require("express-validator");
 
 const AreaImage = require("../models/areaImage");
 const HouseImage = require("../models/houseImage");
 const AreaCategory = require("../models/areaCategory");
 const HouseCategory = require("../models/houseCategory");
+
+const {clearFile} = require("../utils/helper");
 
 exports.viewAllImage = (type) => {
   return async (req, res, next) => {
@@ -144,7 +143,7 @@ exports.editImage = (type) => {
 
       check_image.category_id = categoryId;
       if (req.file) {
-        clearImage(check_image.url);
+        clearFile(check_image.url);
         check_image.url = req.file.path.replace(/\\/g, "/");
       }
       check_image.desc = desc;
@@ -167,11 +166,11 @@ exports.deleteImage = (type) => {
       const imageId = req.params.imageId;
       if (type == "area") {
         const check_image = await AreaImage.findById(imageId);
-        clearImage(check_image.url);
+        clearFile(check_image.url);
         await AreaImage.deleteOne({ _id: imageId });
       } else if (type == "house") {
         const check_image = await HouseImage.findById(imageId);
-        clearImage(check_image.url);
+        clearFile(check_image.url);
         await HouseImage.deleteOne({ _id: imageId });
       } else {
         const err = new Error("Type must be area or house");
@@ -186,15 +185,4 @@ exports.deleteImage = (type) => {
       next(err);
     }
   };
-};
-
-const clearImage = (filePath) => {
-  if (filePath != config.get("default.avatar")) {
-    filePath = path.join(__dirname, "..", filePath);
-    fs.unlink(filePath, (err) => {
-      if (err) {
-        console.log(err);
-      }
-    });
-  }
 };

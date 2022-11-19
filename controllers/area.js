@@ -1,6 +1,3 @@
-const fs = require("fs");
-const path = require("path");
-const config = require("config");
 const { validationResult } = require("express-validator");
 
 const Area = require("../models/area");
@@ -11,7 +8,9 @@ const AreaImage = require("../models/areaImage");
 const HouseImage = require("../models/houseImage");
 const AreaFile = require("../models/areaFile");
 const HouseFile = require("../models/houseFile");
-const locationStatus_helper = require("../utils/locationStatus_helper");
+
+const helper = require("../utils/helper");
+
 exports.areaList = async (req, res, next) => {
   try {
     const list = await Area.find();
@@ -81,7 +80,7 @@ exports.addArea = async (req, res, next) => {
       desc: desc,
     });
 
-    locationStatus_helper.add(province, district);
+    helper.locationStatusAdd(province, district);
     await area.save();
 
     res.status(201).json({ message: "New Area Created", area: area });
@@ -149,7 +148,7 @@ exports.updateArea = async (req, res, next) => {
       throw err;
     }
 
-    locationStatus_helper.update(
+    helper.locationStatusUpdate(
       check_area.province_id,
       check_area.district_id,
       check_province._id,
@@ -163,7 +162,7 @@ exports.updateArea = async (req, res, next) => {
     check_area.price.min = minPrice;
     check_area.price.max = maxPrice;
     if (req.file) {
-      clearFile(check_area.avatar);
+      helper.clearFile(check_area.avatar);
       check_area.avatar = req.file.path.replace(/\\/g, "/");
     }
 
@@ -192,39 +191,39 @@ exports.deleteArea = async (req, res, next) => {
       err.statusCode = 404;
       throw err;
     }
-    locationStatus_helper.delete(check_area);
+    helper.locationStatusDelete(check_area);
 
-    clearFile(check_area.avatar);
+    helper.clearFile(check_area.avatar);
     await Area.deleteOne({ _id: areaId });
     const houses = await House.find({ area_id: areaId });
     houses.map((house) => {
-      clearFile(house.avatar);
+      helper.clearFile(house.avatar);
     });
     await House.deleteMany({ area_id: areaId });
     // Remember to delete house's files and images, do FE need url to delete images and files
     const areaFiles = await AreaFile.find({ area_id: areaId });
     areaFiles.map((file) => {
-      clearFile(file.url);
-      clearFile(file.imageUrl);
+      helper.clearFile(file.url);
+      helper.clearFile(file.imageUrl);
     });
     AreaFile.deleteMany({ area_id: areaId });
 
     const areaImages = await AreaImage.find({ area_id: areaId });
     areaImages.map((image) => {
-      clearFile(image.url);
+      helper.clearFile(image.url);
     });
     AreaImage.deleteMany({ area_id: areaId });
 
     const houseFiles = await HouseFile.find({ house_id: check_house._id });
     houseFiles.map((file) => {
-      clearFile(file.url);
-      clearFile(file.imageUrl);
+      helper.clearFile(file.url);
+      helper.clearFile(file.imageUrl);
     });
     HouseFile.deleteMany({ house_id: check_house._id });
 
     const houseImages = await HouseImage.find({ house_id: check_house._id });
     houseImages.map((image) => {
-      clearFile(image.url);
+      helper.clearFile(image.url);
     });
     HouseImage.deleteMany({ house_id: check_house._id });
 
@@ -234,16 +233,5 @@ exports.deleteArea = async (req, res, next) => {
       err.statusCode = 500;
     }
     next(err);
-  }
-};
-
-const clearFile = (filePath) => {
-  if (filePath != config.get("default.avatar")) {
-    filePath = path.join(__dirname, "..", filePath);
-    fs.unlink(filePath, (err) => {
-      if (err) {
-        console.log(err);
-      }
-    });
   }
 };

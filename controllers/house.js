@@ -1,11 +1,10 @@
-const fs = require("fs");
-const path = require("path");
-const config = require("config");
 const { validationResult } = require("express-validator");
 
 const House = require("../models/house");
 const HouseFile = require("../models/houseFile");
 const HouseImage = require("../models/houseImage");
+
+const {clearFile} = require("../utils/helper");
 
 exports.houseList = async (req, res, next) => {
   try {
@@ -148,16 +147,5 @@ exports.deleteHouse = async (req, res, next) => {
       err.statusCode = 500;
     }
     next(err);
-  }
-};
-
-const clearFile = (filePath) => {
-  if (filePath != config.get("default.avatar")) {
-    filePath = path.join(__dirname, "..", filePath);
-    fs.unlink(filePath, (err) => {
-      if (err) {
-        console.log(err);
-      }
-    });
   }
 };
