@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon ./bin/www",
+    "start": "node ./bin/www",
     "start:dev": "nodemon ./bin/www",
     "seed_admin": "npx run-func .\\utils\\seeder.js adminInit",
     "seed_location": "npx run-func .\\utils\\seeder.js locationInit",
