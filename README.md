@@ -1,5 +1,28 @@
 # PipGo
-
+## Get Started
+ - Clone Project
+```
+   git clone https://gitlab.com/pipgo/pipgoserverv2.git
+   npm install
+```
+ - Folder ẩn: 
+ ```
+PipGo/
+├── public/
+│   ├── images
+│   ├── files
+├── nodemon.json
+ ```
+ - Seeder
+```
+   npm run seed_admin
+   npm run seed_location
+```
+ - Start
+```
+   npm run start:dev
+   npm start
+```
 ## Document
  - **Postman**: https://documenter.getpostman.com/view/23091261/2s83zmMhh1
  - **Database**: https://docs.google.com/document/d/1VUgAnbKpZ555-_Wb1fYp8SnInsbUrfeJq2sGOUL2WQE/edit?usp=sharing
