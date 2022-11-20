@@ -1,11 +1,11 @@
 # PipGo
 ## Get Started
- - Clone Project
+ - **Clone Project**
 ```
    git clone https://gitlab.com/pipgo/pipgoserverv2.git
    npm install
 ```
- - Folder ẩn: 
+ - **Folder ẩn:**
  ```
 PipGo/
 ├── public/
@@ -13,12 +13,12 @@ PipGo/
 │   ├── files
 ├── nodemon.json
  ```
- - Seeder
+ - **Seeder**
 ```
    npm run seed_admin
    npm run seed_location
 ```
- - Start
+ - **Start**
 ```
    npm run start:dev
    npm start
