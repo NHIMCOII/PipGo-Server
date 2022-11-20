@@ -1,9 +1,9 @@
 const path = require("path");
-// const fs = require("fs");
+const fs = require("fs");
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-// const morgan = require("morgan");
+const morgan = require("morgan");
 
 const authRoutes = require("./routes/auth");
 const userRoutes = require("./routes/user");
@@ -17,10 +17,10 @@ const chatRoutes = require("./routes/chat");
 
 const app = express();
 
-// const accessLogStream = fs.createWriteStream(
-//   path.join(__dirname, "access.log"),
-//   { flags: "a" }
-// );
+const accessLogStream = fs.createWriteStream(
+  path.join(__dirname, "access.log"),
+  { flags: "a" }
+);
 
 const corsOptions = {
   origin: "*",
@@ -33,7 +33,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(bodyParser.json());
 app.use(cors(corsOptions));
 
-// app.use(morgan("combined", { stream: accessLogStream }));
+app.use(morgan("combined", { stream: accessLogStream }));
 
 // ======================= Routes =========================
 app.use("/auth", authRoutes);
