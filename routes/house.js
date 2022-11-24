@@ -5,13 +5,15 @@ const upload_multer = require("../middlewares/upload-multer");
 const validator = require("../middlewares/validator");
 const houseController = require("../controllers/house");
 
+const { tryCatch } = require("../middlewares/errorHandler");
+
 const router = express.Router();
 // Remember to add permission middleware when got full insight
 router.get(
   "/list",
   authToken,
   authRole(["admin", "sale_user"]),
-  houseController.houseList
+  tryCatch(houseController.houseList)
 );
 
 router.post(
@@ -20,7 +22,7 @@ router.post(
   authRole(["admin", "sale_user"]),
   upload_multer.image.single("avatar"),
   validator.house,
-  houseController.addHouse
+  tryCatch(houseController.addHouse)
 );
 
 router.put(
@@ -29,14 +31,14 @@ router.put(
   authRole(["admin", "sale_user"]),
   upload_multer.image.single("avatar"),
   validator.house,
-  houseController.updateHouse
+  tryCatch(houseController.updateHouse)
 );
 
 router.delete(
   "/delete/:houseId",
   authToken,
   authRole(["admin", "sale_user"]),
-  houseController.deleteHouse
+  tryCatch(houseController.deleteHouse)
 );
 
 module.exports = router;

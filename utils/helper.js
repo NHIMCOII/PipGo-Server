@@ -5,7 +5,7 @@ const config = require("config");
 const Province = require("../models/province");
 const District = require("../models/district");
 const LocationStatus = require("../models/locationStatus");
-
+ 
 exports.locationStatusAdd = async (province, district) => {
   try {
     const location_status = await LocationStatus.findOne({

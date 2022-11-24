@@ -4,6 +4,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const morgan = require("morgan");
+const { errorHandler } = require("./middlewares/errorHandler");
 
 const authRoutes = require("./routes/auth");
 const userRoutes = require("./routes/user");
@@ -47,11 +48,6 @@ app.use("/search", searchRoutes);
 app.use("/chat", chatRoutes);
 
 // ==================== Errors Handler =====================
-app.use((error, req, res, next) => {
-  const status = error.statusCode || 500;
-  const message = error.message;
-  const data = error.data;
-  res.status(status).json({ message: message, data: data });
-});
+app.use(errorHandler);
 
 module.exports = app;

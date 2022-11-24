@@ -5,11 +5,13 @@ const upload_multer = require("../middlewares/upload-multer");
 const validator = require("../middlewares/validator");
 const fileController = require("../controllers/file");
 
+const { tryCatch } = require("../middlewares/errorHandler");
+
 const router = express.Router();
 
 // ====================== Area File ========================
 
-router.get("/area", fileController.viewAllFile("area"));
+router.get("/area", tryCatch(fileController.viewAllFile("area")));
 
 router.post(
   "/area",
@@ -26,7 +28,7 @@ router.post(
     },
   ]),
   validator.file,
-  fileController.uploadFile("area")
+  tryCatch(fileController.uploadFile("area"))
 );
 
 router.put(
@@ -44,7 +46,7 @@ router.put(
     },
   ]),
   validator.file,
-  fileController.editFile("area")
+  tryCatch(fileController.editFile("area"))
 );
 
 router.delete(
@@ -52,12 +54,12 @@ router.delete(
   authToken,
   authRole(["admin", "sale_user"]),
   validator.file,
-  fileController.deleteFile("area")
+  tryCatch(fileController.deleteFile("area"))
 );
 
 // ====================== House File ========================
 
-router.get("/house", fileController.viewAllFile("house"));
+router.get("/house", tryCatch(fileController.viewAllFile("house")));
 
 router.post(
   "/house",
@@ -74,7 +76,7 @@ router.post(
     },
   ]),
   validator.file,
-  fileController.uploadFile("house")
+  tryCatch(fileController.uploadFile("house"))
 );
 
 router.put(
@@ -92,7 +94,7 @@ router.put(
     },
   ]),
   validator.file,
-  fileController.editFile("house")
+  tryCatch(fileController.editFile("house"))
 );
 
 router.delete(
@@ -100,7 +102,7 @@ router.delete(
   authToken,
   authRole(["admin", "sale_user"]),
   validator.file,
-  fileController.deleteFile("house")
+  tryCatch(fileController.deleteFile("house"))
 );
 
 module.exports = router;

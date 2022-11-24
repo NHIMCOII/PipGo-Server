@@ -3,19 +3,20 @@ const express = require("express");
 const { authToken, authRole } = require("../middlewares/is-auth");
 const validator = require("../middlewares/validator");
 const categoryController = require("../controllers/category");
+const { tryCatch } = require("../middlewares/errorHandler");
 
 const router = express.Router();
 
-router.get("/area", categoryController.viewCategory("area"));
+router.get("/area", tryCatch(categoryController.viewCategory("area")));
 
-router.get("/house", categoryController.viewCategory("house"));
+router.get("/house", tryCatch(categoryController.viewCategory("house")));
 
 router.post(
   "/areaAdd",
   authToken,
   authRole(["editor", "admin"]),
   validator.category,
-  categoryController.addCategory("area")
+  tryCatch(categoryController.addCategory("area"))
 );
 
 router.post(
@@ -23,7 +24,7 @@ router.post(
   authToken,
   authRole(["editor", "admin"]),
   validator.category,
-  categoryController.addCategory("house")
+  tryCatch(categoryController.addCategory("house"))
 );
 
 router.put(
@@ -31,7 +32,7 @@ router.put(
   authToken,
   authRole(["editor", "admin"]),
   validator.category,
-  categoryController.updateCategory("area")
+  tryCatch(categoryController.updateCategory("area"))
 );
 
 router.put(
@@ -39,21 +40,21 @@ router.put(
   authToken,
   authRole(["editor", "admin"]),
   validator.category,
-  categoryController.updateCategory("house")
+  tryCatch(categoryController.updateCategory("house"))
 );
 
 router.delete(
   "/areaDelete/:categoryId",
   authToken,
   authRole(["editor", "admin"]),
-  categoryController.deleteCategory("area")
+  tryCatch(categoryController.deleteCategory("area"))
 );
 
 router.delete(
   "/houseDelete/:categoryId",
   authToken,
   authRole(["editor", "admin"]),
-  categoryController.deleteCategory("house")
+  tryCatch(categoryController.deleteCategory("house"))
 );
 
 module.exports = router;

@@ -5,11 +5,13 @@ const upload_multer = require("../middlewares/upload-multer");
 const validator = require("../middlewares/validator");
 const imageController = require("../controllers/image");
 
+const { tryCatch } = require("../middlewares/errorHandler");
+
 const router = express.Router();
 
 // ====================== Area Image  ========================
 
-router.get("/area", imageController.viewAllImage("area"));
+router.get("/area", tryCatch(imageController.viewAllImage("area")));
 
 router.post(
   "/area",
@@ -17,7 +19,7 @@ router.post(
   authRole(["admin", "sale_user"]),
   upload_multer.image.single("image"),
   validator.image,
-  imageController.uploadImage("area")
+  tryCatch(imageController.uploadImage("area"))
 );
 
 router.put(
@@ -26,7 +28,7 @@ router.put(
   authRole(["admin", "sale_user"]),
   upload_multer.image.single("image"),
   validator.image,
-  imageController.editImage("area")
+  tryCatch(imageController.editImage("area"))
 );
 
 router.delete(
@@ -34,12 +36,12 @@ router.delete(
   authToken,
   authRole(["admin", "sale_user"]),
   validator.image,
-  imageController.deleteImage("area")
+  tryCatch(imageController.deleteImage("area"))
 );
 
 // ====================== House Image  ========================
 
-router.get("/house", imageController.viewAllImage("house"));
+router.get("/house", tryCatch(imageController.viewAllImage("house")));
 
 router.post(
   "/house",
@@ -47,7 +49,7 @@ router.post(
   authRole(["admin", "sale_user"]),
   upload_multer.image.single("image"),
   validator.image,
-  imageController.uploadImage("house")
+  tryCatch(imageController.uploadImage("house"))
 );
 
 router.put(
@@ -56,7 +58,7 @@ router.put(
   authRole(["admin", "sale_user"]),
   upload_multer.image.single("image"),
   validator.image,
-  imageController.editImage("house")
+  tryCatch(imageController.editImage("house"))
 );
 
 router.delete(
@@ -64,7 +66,7 @@ router.delete(
   authToken,
   authRole(["admin", "sale_user"]),
   validator.image,
-  imageController.deleteImage("house")
+  tryCatch(imageController.deleteImage("house"))
 );
 
 module.exports = router;
