@@ -4,10 +4,10 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon ./bin/www",
+    "start": "node ./bin/www",
     "start:dev": "nodemon ./bin/www",
     "seed_admin": "npx run-func .\\utils\\seeder.js adminInit",
-    "seed_province": "npx run-func .\\utils\\seeder.js provinceInit",
+    "seed_location": "npx run-func .\\utils\\seeder.js locationInit",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "DuyAnh",
@@ -29,6 +29,8 @@
     "helmet": "^6.0.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.6.3",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1",
+    "socket.io": "^4.5.3"
   }
 }

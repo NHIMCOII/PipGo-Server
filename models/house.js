@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const config = require ('config')
+const config = require("config");
 
 const Schema = mongoose.Schema;
 
@@ -14,7 +14,7 @@ const houseSchema = new Schema(
       type: String,
       required: true,
       enum: ["available", "maintaining", "fully booked"],
-      default: config.get('booking_status.maintaining')
+      default: config.get("booking_status.maintaining"),
     },
     name: {
       type: String,
@@ -31,9 +31,9 @@ const houseSchema = new Schema(
     avatar: {
       type: String,
       required: true,
-      default: config.get('default.avatar'),
+      default: config.get("default.avatar"),
     },
-    desc: String
+    desc: String,
   },
   { timestamps: true }
 );

@@ -5,8 +5,8 @@ const Schema = mongoose.Schema;
 const houseCategorySchema = new Schema(
   {
     name: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
   },
   { timestamps: true }

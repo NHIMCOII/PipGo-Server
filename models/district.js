@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
 
-const provinceSchema = new Schema({
+const districtSchema = new Schema({
   code: {
     type: Number,
     required: true,
@@ -19,10 +19,11 @@ const provinceSchema = new Schema({
     type: String,
     required: true,
   },
-  phone_code: {
-    type: String,
+  province_code: {
+    type: Number,
     required: true,
+    ref: "Province",
   },
 });
 
-module.exports = mongoose.model("Province", provinceSchema);
+module.exports = mongoose.model("District", districtSchema);

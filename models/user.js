@@ -5,11 +5,11 @@ const Schema = mongoose.Schema;
 
 const userSchema = new Schema(
   {
-    contracts: [{ type: mongoose.Types.ObjectId, ref: "Contract" }],
-    address: {
-      province_id: { type: mongoose.Types.ObjectId, ref: "Province" },
-      details: String,
-    },
+    // contracts: [{ type: mongoose.Types.ObjectId, ref: "Contract" }],
+    // address: {
+    //   province_id: { type: mongoose.Types.ObjectId, ref: "Province" },
+    //   details: String,
+    // },
     role: {
       type: String,
       required: true,
@@ -19,6 +19,10 @@ const userSchema = new Schema(
       type: Boolean,
       required: true,
       default: 1,
+    },
+    contact: {
+      type: Number,
+      default: 0,
     },
     email: {
       type: String,

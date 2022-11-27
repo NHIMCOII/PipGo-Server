@@ -18,7 +18,7 @@ const areaFileSchema = new Schema(
       type: String,
       required: true,
     },
-    desc: String
+    desc: String,
   },
   { timestamps: true }
 );

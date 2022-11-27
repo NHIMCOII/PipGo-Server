@@ -5,6 +5,8 @@ const { canViewProfile } = require("../middlewares/permission");
 const validator = require("../middlewares/validator");
 const userController = require("../controllers/user");
 
+const { tryCatch } = require("../middlewares/errorHandler");
+
 const router = express.Router();
 
 // ================================== Account ==================================
@@ -13,7 +15,7 @@ router.post(
   authToken,
   authRole(["admin"]),
   validator.profile,
-  userController.register
+  tryCatch(userController.register)
 );
 
 router.get(
@@ -21,7 +23,7 @@ router.get(
   authToken,
   authRole(["admin", "editor", "sale_user"]),
   canViewProfile,
-  userController.profile
+  tryCatch(userController.profile)
 );
 
 router.put(
@@ -30,7 +32,7 @@ router.put(
   authRole(["admin", "editor", "sale_user"]),
   canViewProfile,
   validator.profile,
-  userController.updateProfile
+  tryCatch(userController.updateProfile)
 );
 
 router.put(
@@ -39,16 +41,21 @@ router.put(
   authRole(["admin", "editor", "sale_user"]),
   canViewProfile,
   validator.updatePassword,
-  userController.updatePassword
+  tryCatch(userController.updatePassword)
 );
 
-router.get("/list", authToken, authRole(["admin"]), userController.userList);
+router.get(
+  "/list",
+  authToken,
+  authRole(["admin"]),
+  tryCatch(userController.userList)
+);
 
 router.delete(
   "/delete/:userId",
   authToken,
   authRole(["admin"]),
-  userController.deleteAccount
+  tryCatch(userController.deleteAccount)
 );
 
 module.exports = router;
