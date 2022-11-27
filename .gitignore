@@ -2,3 +2,4 @@
 nodemon.json
 access.log
 /public
+package-lock.json
