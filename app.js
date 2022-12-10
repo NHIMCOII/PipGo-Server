@@ -4,6 +4,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const morgan = require("morgan");
+const cookieSession = require("cookie-session");
 const { errorHandler } = require("./middlewares/errorHandler");
 
 const authRoutes = require("./routes/auth");
@@ -33,7 +34,12 @@ const corsOptions = {
 app.use(express.static(path.join(__dirname, "public")));
 app.use(bodyParser.json());
 app.use(cors(corsOptions));
-
+app.use(
+  cookieSession({
+    signed: false,
+    secure: false,
+  })
+);
 app.use(morgan("combined", { stream: accessLogStream }));
 
 // ======================= Routes =========================

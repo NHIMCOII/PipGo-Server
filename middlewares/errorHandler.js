@@ -12,10 +12,10 @@ const tryCatch = (f) => async (req, res, next) => {
     await f(req, res, next);
   } catch (err) {
     if (!err.statusCode) {
-          err.statusCode = 500;
-        }
-        next(err);
+      err.statusCode = 500;
     }
+    next(err);
+  }
 };
 
 const errorHandler = (error, req, res, next) => {
