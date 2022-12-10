@@ -2,6 +2,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const config = require("config");
+const BadRequestError = require("../errors/bad-request-error");
 
 const sgMail = require("@sendgrid/mail");
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
@@ -23,13 +24,17 @@ exports.login = async (req, res, next) => {
 
   const isEqual = await bcrypt.compare(password, check_user.password);
   if (!isEqual) {
-    const error = new Error("Wrong password!");
+    const error = new BadRequestError("Wrong password!");
     error.statusCode = 401;
     throw error;
   }
 
-  let user = {
+  const user = {
     _id: check_user._id,
+    email: check_user.email,
+    name: check_user.name,
+    role: check_user.role,
+    status: check_user.status,
   };
   const access_token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
     expiresIn: config.get("default.access_token_exp"),
@@ -40,10 +45,12 @@ exports.login = async (req, res, next) => {
 
   check_user.refresh_token = refresh_token;
   await check_user.save();
+  req.session = { access_token };
+  req.user = user;
+
   res.status(200).json({
-    user: check_user,
-    access_token: access_token,
-    refresh_token: refresh_token,
+    message: "Login Successfully",
+    data: { refresh_token },
   });
 };
 
@@ -60,34 +67,28 @@ exports.generateToken = async (req, res, next) => {
     refresh_token: refresh_token,
   });
   if (!check_user) {
+    req.session = null;
+    req.user = null;
     const err = new Error("Refresh token not found");
     err.statusCode = 404;
     throw err;
   }
+  const user = {
+    _id: check_user._id,
+    email: check_user.email,
+    name: check_user.name,
+    role: check_user.role,
+    status: check_user.status,
+  };
+  const access_token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
+    expiresIn: config.get("default.access_token_exp"),
+  });
 
-  jwt.verify(
-    refresh_token,
-    process.env.REFRESH_TOKEN_SECRET,
-    (err, check_user) => {
-      if (err) {
-        const err = new Error("Invalid Token");
-        err.statusCode = 400;
-        throw err;
-      }
+  req.session = { access_token };
 
-      let user = {
-        _id: check_user._id,
-      };
-
-      const access_token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
-        expiresIn: config.get("default.access_token_exp"),
-      });
-
-      return res.status(200).json({
-        access_token: access_token,
-      });
-    }
-  );
+  return res.status(200).json({
+    message: "Refresh Token Successfully",
+  });
 };
 
 exports.reset = async (req, res, next) => {
@@ -154,6 +155,8 @@ exports.logout = async (req, res, next) => {
   const check_user = await User.findById(req.user._id);
   check_user.refresh_token = undefined;
   check_user.save();
+  req.user = null;
+  req.session = null;
 
   res.status(200).json({ message: "Logout successfully" });
 };

@@ -4,6 +4,8 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const morgan = require("morgan");
+const cookieSession = require("cookie-session");
+const NotFoundError = require("./errors/not-found-error");
 const { errorHandler } = require("./middlewares/errorHandler");
 
 const authRoutes = require("./routes/auth");
@@ -33,7 +35,12 @@ const corsOptions = {
 app.use(express.static(path.join(__dirname, "public")));
 app.use(bodyParser.json());
 app.use(cors(corsOptions));
-
+app.use(
+  cookieSession({
+    signed: false,
+    secure: false,
+  })
+);
 app.use(morgan("combined", { stream: accessLogStream }));
 
 // ======================= Routes =========================
@@ -48,6 +55,9 @@ app.use("/search", searchRoutes);
 app.use("/chat", chatRoutes);
 
 // ==================== Errors Handler =====================
+app.all("*", (req, res, next) => {
+  throw new NotFoundError();
+});
 app.use(errorHandler);
 
 module.exports = app;
