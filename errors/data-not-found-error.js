@@ -1,18 +1,18 @@
 const CustomError = require("./custom-error.js");
 
-class NotFoundError extends CustomError {
+class DataNotFoundError extends CustomError {
   statusCode = 404;
   responseCode = -604;
-  constructor() {
-    super("Route not found");
+  constructor(message) {
+    super(message);
   }
 
   serializeErrors() {
     return {
       response_code: this.responseCode,
-      error: [{ message: "404 Not Found" }],
+      error: [{ message: this.message }],
     };
   }
 }
 
-module.exports = NotFoundError;
+module.exports = DataNotFoundError;

@@ -1,8 +1,8 @@
 const CustomError = require("./custom-error.js");
 
-class BadRequestError extends CustomError {
-  statusCode = 400;
-  responseCode = -600;
+class DatabaseConnectionError extends CustomError {
+  statusCode = 502;
+  responseCode = -602;
   constructor(message) {
     super(message);
   }
@@ -15,4 +15,4 @@ class BadRequestError extends CustomError {
   }
 }
 
-module.exports = BadRequestError;
+module.exports = DatabaseConnectionError;

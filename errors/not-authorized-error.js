@@ -1,8 +1,8 @@
 const CustomError = require("./custom-error.js");
 
-class BadRequestError extends CustomError {
-  statusCode = 400;
-  responseCode = -600;
+class NotAuthorizedError extends CustomError {
+  statusCode = 403;
+  responseCode = -603;
   constructor(message) {
     super(message);
   }
@@ -15,4 +15,4 @@ class BadRequestError extends CustomError {
   }
 }
 
-module.exports = BadRequestError;
+module.exports = NotAuthorizedError;

@@ -2,6 +2,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const config = require("config");
+const BadRequestError = require("../errors/bad-request-error");
 
 const sgMail = require("@sendgrid/mail");
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
@@ -23,7 +24,7 @@ exports.login = async (req, res, next) => {
 
   const isEqual = await bcrypt.compare(password, check_user.password);
   if (!isEqual) {
-    const error = new Error("Wrong password!");
+    const error = new BadRequestError("Wrong password!");
     error.statusCode = 401;
     throw error;
   }

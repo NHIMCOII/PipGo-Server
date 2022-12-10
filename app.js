@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const morgan = require("morgan");
 const cookieSession = require("cookie-session");
+const NotFoundError = require("./errors/not-found-error");
 const { errorHandler } = require("./middlewares/errorHandler");
 
 const authRoutes = require("./routes/auth");
@@ -54,6 +55,9 @@ app.use("/search", searchRoutes);
 app.use("/chat", chatRoutes);
 
 // ==================== Errors Handler =====================
+app.all("*", (req, res, next) => {
+  throw new NotFoundError();
+});
 app.use(errorHandler);
 
 module.exports = app;
